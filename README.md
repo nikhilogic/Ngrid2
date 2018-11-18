@@ -1,2 +1,4 @@
-# Ngrid2
-Angular data grid using Angular 7
+# NgNgrid2
+
+This is a data grid using angular 7 with typescript
+More info to come.

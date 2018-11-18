@@ -1,0 +1,323 @@
+<div [ngStyle]="getStyle()">
+    <nav id="ngGridToolbar" class="navbar navbar-dark fixed-top bg-light">
+        <div class="container-fluid">         
+            <div class="btn-toolbar">                         
+                <span class="btn-group btn-group-toggle">
+                    <label
+                        class="btn btn-primary"                                                        
+                        ngbButtonLabel                                                         
+                        data-toggle="tooltip" 
+                        data-placement="right" 
+                        title="Show/Hide Settings" 
+                        btn-checkbox-true="true"                             
+                        btn-checkbox-false="false">                          
+                        <span class="fas fa-cog"></span>
+                        <input type="checkbox" ngbButton [(ngModel)]="showSettings">          
+                        &nbsp;         
+                        <span [ngClass]="showSettings? 'fas fa-caret-left':'fas fa-caret-right'"></span>
+                    </label>
+                </span>
+                &nbsp;                  
+                <span class="btn-group btn-group-toggle" *ngIf="showSettings">                      
+                    <label class="btn-primary" ngbButtonLabel   data-toggle="tooltip" data-placement="right" title="Show/Hide Row Numbers" >                          
+                        <input type="checkbox" ngbButton [(ngModel)]="showRowNumbers" >
+                        Row #
+                    </label>
+                    <label class="btn-primary" ngbButtonLabel data-toggle="tooltip" data-placement="right" title="Show/Hide Row Selector">                          
+                        <input type="checkbox" ngbButton [(ngModel)]="showRowSelector" >
+                        Selectable Rows
+                    </label>
+                    <label class="btn-primary" ngbButtonLabel data-toggle="tooltip" data-placement="right" title="Show/Hide Children Count">                          
+                        <input type="checkbox" ngbButton [(ngModel)]="showChildrenCount" >
+                        Child Record Count
+                    </label>
+                </span>
+                &nbsp;
+                  <!-- <input id="fileUploadJson" type="file" accept=".json" onchange="angular.element(this).scope().on_fileUpload(this)" style="display:none" />
+                  <span class="btn-group ngngrid-animate-show" *ngIf="showSettings">
+                      <label class="btn btn-primary" (click)="importFromJson()" data-toggle="tooltip" data-placement="right" title="Import grid rows from json file">
+                          Import <span class="glyphicon glyphicon-import"></span>
+                      </label>
+                      <label class="btn btn-primary" [disabled]="!isAnyRowSelected()" (click)="exportSelectedToJson()" data-toggle="tooltip" data-placement="right" title="Export selected rows to json file">
+                          Export Selected <span class="glyphicon glyphicon-export"></span>
+                      </label>
+                  </span>-->
+                <span class="btn-group">                        
+                    <button class="btn btn-primary" (click)="clearAllFilters()" [disabled]="!anyFiltersExist()" data-toggle="tooltip" data-placement="right" title="Clear All Filters">
+                        Clear all<i class="fas fa-filter"></i>
+                    </button>                                                    
+                </span>               
+            </div>
+            
+            <span class="btn-toolbar justify-content-end"  >
+                <span class="btn" onmouseover="" style="cursor:default"><b>{{gridCurrentPage}}</b>-<b>{{gridTotalPages()}}</b> of <b>{{rows.length}}</b></span> 
+                <span class="input-group"  data-toggle="tooltip" data-placement="right" title="Records per Page">
+                    <span class="input-group-prepend">
+                        <span class="input-group-text"><b>Records</b> / <b>Page</b></span>
+                    </span>
+                    <select class="form-control" [(ngModel)]="gridPageSize">
+                        <option *ngFor="let number of pageSizeOptions">{{number}}</option>
+                    </select>
+                </span>      
+                &nbsp;          
+                <span style="height:30px">
+                    <ngb-pagination   [collectionSize]="gridTotalPages()*10" [(page)]="gridCurrentPage"  [boundaryLinks]="true" ></ngb-pagination>
+                </span>
+            </span>
+            
+        </div>
+       
+    </nav> 
+    
+   <div class="ngngrid-scroll" [ngStyle]="setGridTableStyle()">
+      <table id="ngGridTable" class="table table-condensed table-bordered table-striped">
+          <tr>              
+              <th *ngIf="childColumndefinitions.length > 0" class="bg-primary"></th>
+              <th *ngIf="showRowNumbers" class="bg-primary">#</th>              
+              <th *ngIf="showRowSelector" (click)="toggleRowsSelect()" style="cursor:pointer" data-toggle="tooltip" title="Select/Unselect All" class="bg-primary">                                    
+                  <input type="checkbox" [(ngModel)] ="allRowsSelected" aria-label="Checkbox for following text input" readonly>
+              </th>
+              <ng-container *ngFor="let c of columnDefinitions" >
+                <th  *ngIf="!c.isNgNgridColumnHide"  class="bg-primary">
+                    <span (click)="changeSort(c)" style="cursor:pointer">
+                        {{c.DisplayName()}} <i class="text-dark">{{getColumnType(c)}}</i>
+                        <span *ngIf="isSorted(c)" [ngClass]="gridSortOrder? 'fas fa-caret-down':'fas fa-caret-up'" ></span>
+                    </span>
+                    <span style="cursor:pointer" *ngIf="isColFilterApplied(c.Name)" class="fas fa-filter" (click)="removeColFilters(c);$event.stopPropogation()"></span>
+                </th>
+             </ng-container>
+          </tr>
+          <tr>
+              <th *ngIf="childColumndefinitions.length > 0"></th>
+              <th *ngIf="showRowNumbers"></th>
+              <th *ngIf="showRowSelector"></th>
+              <ng-container *ngFor="let c of columnDefinitions; let j = index">
+                <th  *ngIf="!c.isNgNgridColumnHide">                 
+                    <div *ngIf="!c.DisableFilter" ngbDropdown  autoClose="outside"  (openChange)="ondropDownToggle($event,c)"  #myDrop="ngbDropdown" style="width:100%">                                                          
+                        <input ngbDropdownAnchor  type="text" class="form-control" [(ngModel)]="c.dropDownFilterInput"  (focus)="myDrop.open()"  (keypress)="dropdownFilterKeyPress($event,c,myDrop)" (click)="myDrop.open()" />
+                        <ul  ngbDropdownMenu [ngClass]="j==columnDefinitions.length-1 ? 'dropdown-menu-right' :''"  >                            
+                            <li class="dropdown-item ngngrid-dropdown"><small class="text-muted">*Type & hit Enter to apply filters</small></li>
+                            <li class="dropdown-divider"></li>                                   
+                            <li class="dropdown-item ngngrid-dropdown" *ngIf="getColumnType(c)=='Ngrid2DateColumn'">                                                                                                   
+                                    <div>
+                                        <span class="badge badge-primary">Range</span> {{ngNgridStartDate.month}}/{{ngNgridStartDate.day}}/{{ngNgridStartDate.year}}
+                                         - {{ngNgridEndDate.month}}/{{ngNgridEndDate.day}}/{{ngNgridEndDate.year}}
+                                    </div>
+                                    <ngb-datepicker #dtStart [(ngModel)]="ngNgridStartDate" (navigate)="date = $event.next" [maxDate]="ngNgridEndDate" (select)="updateDateRangeFilter(c.Name,ngNgr)" ></ngb-datepicker>                                    
+                                    <ngb-datepicker #dtEnd [(ngModel)]="ngNgridEndDate" (navigate)="date = $event.next" [minDate]="ngNgridStartDate"></ngb-datepicker>                                                                
+                            </li>
+                            <!-- TODO: numbering range filter -->
+                            <!-- <li class="dropdown-item ngngrid-dropdown" *ngIf="getColumnType(c)=='Ngrid2NumberColumn'">
+                                <span class="input-group" style="padding-bottom:5px">
+                                    <span class="input-group-addon">
+                                        #
+                                    </span>
+                                    <input type="number" class="form-control" [(ngModel)]="ngNgridStartNumber" required placeholder="From" (ngModelChange)="updateRangeFilter(c,ngNgridStartNumber,ngNgridEndNumber,true)" />
+                                </span>
+                                <span class="input-group">
+                                    <span class="input-group-addon">
+                                        #
+                                    </span>
+                                    <input type="number" class="form-control" [(ngModel)]="ngNgridEndNumber" required placeholder="To" (ngModelChange)="updateRangeFilter(c,ngNgridStartNumber,ngNgridEndNumber,true)" />
+                                </span>
+                            </li> -->
+                            <li *ngIf="getColumnType(c)=='Ngrid2DateColumn' || getColumnType(c)=='Ngrid2NumberColumn'" class="dropdown-divider"></li>
+                            <!-- TODO: pagination and check box selection for the distinct values -->
+                            <!-- <div class="btn-group">
+                                <label class="btn" onmouseover="" style="cursor:default">
+                                    <b>{{filterCurrentPage}}</b>-<b>{{totalPages(c.ngrid2DropdownFilteredObjects.length,filterPageSize)}}</b> of <b>{{c.ngrid2DropdownFilteredObjects.length}}</b>
+                                </label>
+                                <ngb-pagination class="pagination" onmouseover="" style="cursor: pointer;margin:0" boundary-links="true" total-items="c.ngrid2DropdownFilteredObjects.length" [(ngModel)]="filterCurrentPage" items-per-page="filterPageSize" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" max-size="0" rotate=""></ngb-pagination>
+                            </div> -->
+                            <!--                            
+                            <li class="divider"></li>
+                            <li class="ngngrid-dropdown">
+                                <span class="input-group input-group-sm" style="cursor: pointer" (click)="toggleColFilters(c);$event.stopPropagation()">
+                                    <span class="glyphicon" [ngClass]="isColFilterApplied(c.Name)?'glyphicon-check':'glyphicon-unchecked'"></span>
+                                    <span>Select/Unselect All</span>
+                                </span>
+                            </li>
+                        -->
+                            <li class="dropdown-divider"></li>                            
+                            <li class="dropdown-item ngngrid-dropdown" *ngFor="let distinctObj of ngrid2DropdownFilteredObjects(c)" (click)="addColumnFilters(c.Name,[distinctObj.DistinctValue]);$event.stopPropagation()" style="cursor: pointer">                                                            
+                                <input type="checkbox" [ngModel]="isColFiltered(c.Name,distinctObj.DistinctValue)"/>
+                                <small style="font-weight:normal"> 
+                                    <span [ngClass]="c.FilterClassFn(distinctObj)" style="margin-right:2px">
+                                        {{(distinctObj.DisplayValue != null && distinctObj.DisplayValue.toString() != '') ? distinctObj.DisplayValue : '(Blanks)'}}
+                                        <span *ngIf="c.FilterIconFn" class="glyphicon" [ngClass]="c.FilterIconFn(distinctObj)"></span>
+                                    </span>
+                                    <span class="text-muted">({{distinctObj.DistinctCount}})</span>
+                                </small>                                
+                            </li>
+                        </ul>
+                    </div>
+                </th>
+            </ng-container>             
+          </tr>          
+          <ng-container *ngFor="let row of filteredRows(); let i = index" >              
+            <tr  style="border-bottom: none" [ngClass]="getRowClass(row)" >                     
+                    <td *ngIf="childColumndefinitions.length > 0">                        
+                        <button type="button" class="btn btn-sm btn-default" (click)="row.isNgNgridOpen = !row.isNgNgridOpen" [disabled]="childRowsCount(row) <= 0" data-toggle="tooltip" title="{{row.isNgNgridOpen?'Collapse Details':'Expand Details'}}" >
+                            <span [ngClass]= "row.isNgNgridOpen ?  'fa fa-minus-square':'fa fa-plus-square'"></span>                      
+                            <sub *ngIf="showChildrenCount">
+                                {{childRowsCount(row)}}
+                            </sub>
+                        </button>                  
+                    </td>
+                    <td *ngIf="showRowNumbers">                   
+                        {{(gridCurrentPage-1)*gridPageSize + i+1}}
+                    </td>
+                    <td *ngIf="showRowSelector" data-toggle="tooltip" title="Select/Unselect Row">
+                        <input type="checkbox" [(ngModel)]="row.isNgNgridSelected"/>                  
+                    </td>              
+                    
+                    <td  *ngFor="let c of columnDefinitions; let cIndex = index" [ngClass]="c.CellClassFn(row)">                                                   
+                        <span  *ngIf="!c.isNgNgridColumnHide">                          
+                            <span [ngClass]="getRowIcon(cIndex,row)"></span>
+                            <span [ngSwitch]="getColumnType(c)">                       
+                                <button type="button" *ngSwitchCase="'Ngrid2ButtonColumn'" [disabled]="c.DisabledFn(row)" class="btn  btn-sm {{c.ClassFn(row)}}" data-toggle="tooltip" data-placement="right" title="{{c.TooltipFn(row)}}" (click)="c.ClickFn(row)">
+                                    <span *ngIf="c.IconFn" [ngClass]="c.IconFn(row)"></span>
+                                    {{c.TextFn ?  c.TextFn(row) :  getColValue(c,row)}}
+                                    <span *ngIf="c.BadgeFn" class="badge" [ngClass]="c.BadgeClassFn(row)">{{c.BadgeFn(row)}}</span>
+                                </button>
+                                <span *ngSwitchCase="'Ngrid2DateColumn'" [ngClass]="c.ClassFn ? c.ClassFn(row) : ''">                            
+                                    {{c.TextFn ?  c.TextFn(row) :  getColValue(c,row)|date:c.DateFormatFn(row)}}
+                                    <span *ngIf="c.BadgeFn" class="badge" [ngClass]="c.BadgeClassFn(row)">{{c.BadgeFn(row)}}</span>
+                                </span>
+                                <span *ngSwitchCase="'Ngrid2SelectColumn'" class="input-group">                                                                      
+                                    <span *ngIf="c.ClassFn" class="input-group-addon" [ngClass]="c.ClassFn(row)">                                                                
+                                    </span>
+                                    <select   *ngIf="c.SelectValue != null" [compareWith]="compareFn" class="form-control" [(ngModel)]="row.SelectBind" (ngModelChange)="row.isNgNgridDirty=true;setColValue(c,row,row.SelectBind)" required>
+                                        <option *ngFor="let o of c.SelectFn(row)"  [ngValue]="o">
+                                            {{o[c.SelectKey]}} : {{o[c.SelectValue]}}
+                                        </option>
+                                    </select>
+                                    <select *ngIf="c.SelectValue == null" class="form-control" [(ngModel)]="row.SelectBind" (ngModelChange)="row.isNgNgridDirty=true;setColValue(c,row,row.SelectBind)" required>
+                                        <option *ngFor="let o of c.SelectFn(row)"></option>
+                                    </select>                            
+                                </span>
+                                <a *ngSwitchCase="'Ngrid2LinkColumn'" href="{{c.UrlFn(row)}}" target="{{c.TargetFn ? c.TargetFn(row):'_blank'}}" [ngClass]="c.ClassFn(row)">
+                                    <span *ngIf="c.IconFn" [ngClass]="c.IconFn(row)"></span>
+                                    {{c.TextFn ?  c.TextFn(row) :  getColValue(c,row)}}
+                                    <span *ngIf="c.BadgeFn" class="badge" [ngClass]="c.BadgeClassFn(row)">{{c.BadgeFn(row)}}</span>
+                                </a>
+                                <span *ngSwitchCase="'Ngrid2InputColumn'" class="input-group">                                                        
+                                    <input class="form-control" [ngClass]="c.ClassFn(row)"  [(ngModel)]="row.InputBind" ng-readonly="c.DisabledFn(row)" (ngModelChange)="row.isNgNgridDirty=true;setColValue(c,row,row.InputBind)" placeholder="{{c.NullOrEmptyFn(row)}}" type="{{c.InputTypeFn(row)}}" />
+                                </span>
+                                <span  *ngSwitchDefault [ngClass]="c.ClassFn ? c.ClassFn(row) : ''"  data-toggle="tooltip" data-placement="right" title="{{c.TooltipFn(row)}}">
+                                    <span *ngIf="c.IconFn" [ngClass]="c.IconFn(row)"></span>
+                                    {{c.TextFn ?  c.TextFn(row) :  getColValue(c,row)}}                            
+                                    <a  href="{{c.BadgeUrlFn(row)}}"  target="{{c.BadgeTargetFn ? c.BadgeTargetFn(row):'_blank'}}" *ngIf="c.BadgeFn" class="badge" [ngClass]="c.BadgeClassFn(row)" >{{c.BadgeFn(row)}}</a>
+                                </span>
+                                <img *ngIf="c.ImgFn" [ngClass]="c.ImgClassFn(row)" src="{{c.ImgFn(row)}}" />
+                            </span>
+                        </span>
+                    </td>                    
+            </tr>        
+             <tr *ngIf="row.isNgNgridOpen">
+              <td></td>
+              <td *ngIf="showRowNumbers"></td>
+              <td *ngIf="showRowSelector"></td>
+              <td [colSpan]="columnDefinitions.length">
+                  <table *ngFor="let childProp of childPropertynames; let iChildPropName = index" class="table table-condensed table-bordered table-striped" >
+                      <tr>
+                          <th *ngFor="let childCol of childColumndefinitions">
+                              <span (click)="changeChildSort(childCol)" style="cursor:pointer">
+                                  {{childCol.DisplayName()}}
+                                  <span *ngIf="isChildSorted(childCol)"  [ngClass]="gridChildrenSortOrder? 'fas fa-caret-down':'fas fa-caret-up'" ></span>
+                              </span>                              
+                          </th>
+                      </tr>
+                     
+                      <tr *ngFor="let childRow of getChildRows(row,childPropertynames[iChildPropName]); let iChildRow = index" [ngClass]="getRowClass(childRow)">                          
+
+                          <td *ngFor="let childCol of childColumndefinitions; let childColIndex = index" [ngClass]="childCol.CellClassFn(childRow)">                                
+                                <span [ngClass]="getRowIcon(childColIndex,childRow)"></span>
+                                <span  [ngSwitch]="getColumnType(childCol)">                                  
+                                  <button *ngSwitchCase="'Ngrid2ButtonColumn'" [disabled]="childCol.DisabledFn(childRow)" class="btn  btn-sm  {{childCol.ClassFn(childRow)}}" data-toggle="tooltip" data-placement="right" title="{{childCol.TooltipFn(childRow)}}" (click)="childCol.ClickFn(childRow)">
+                                      <span *ngIf="childCol.IconFn" [ngClass]="childCol.IconFn(childRow)"></span>
+                                      {{childCol.TextFn ?  childCol.TextFn(childRow) :  getColValue(childCol,childRow)}}
+                                      <span *ngIf="childCol.BadgeFn" class="badge" [ngClass]="childCol.BadgeClass">{{childCol.BadgeFn(childRow)}}</span>
+                                  </button>                                 
+                                  <span *ngSwitchCase="'Ngrid2DateColumn'" [ngClass]="childCol.ClassFn ? childCol.ClassFn(childRow) : ''">                                      
+                                      {{childCol.TextFn ?  childCol.TextFn(childRow) :  getColValue(childCol,childRow)|date:childCol.DateFormatFn(childRow)}}
+                                      <span *ngIf="childCol.BadgeFn" class="badge" [ngClass]="childCol.BadgeClassFn(childRow)">{{childCol.BadgeFn(childRow)}}</span>
+                                  </span>                                
+                                  <span *ngSwitchCase="'Ngrid2SelectColumn'" class="input-group">                                                                      
+                                    <span *ngIf="childCol.ClassFn" class="input-group-addon" [ngClass]="childCol.ClassFn(childRow)">                                                                
+                                    </span>
+                                    <select   *ngIf="childCol.SelectValue != null" [compareWith]="compareFn" class="form-control" [(ngModel)]="childRow.SelectBind"  (ngModelChange)="childRow.isNgNgridDirty=true;setColValue(childCol,childRow,childRow.SelectBind)" required>                              
+                                        <option *ngFor="let o of childCol.SelectFn(childRow)"  [ngValue]="o">
+                                            {{o[childCol.SelectKey]}} : {{o[childCol.SelectValue]}}
+                                        </option>
+                                    </select>
+                                    <select *ngIf="childCol.SelectValue == null" class="form-control" [(ngModel)]="childRow.SelectBind" (ngModelChange)="childRow.isNgNgridDirty=true;setColValue(childCol,childRow,childRow.SelectBind)" required>                              
+                                        <option *ngFor="let o of childCol.SelectFn(childRow)"></option>
+                                    </select>                            
+                                 </span>
+                                  
+
+                                  <a *ngSwitchCase="'Ngrid2LinkColumn'" href="{{childCol.UrlFn(childRow)}}" target="{{childCol.TargetFn ? childCol.TargetFn(childRow):'_blank'}}" [ngClass]="childCol.ClassFn(childRow)">                            
+                                    <span *ngIf="childCol.IconFn" [ngClass]="childCol.IconFn(childRow)"></span>
+                                    {{childCol.TextFn ?  childCol.TextFn(childRow) :  getColValue(childCol,childRow)}}
+                                    <span *ngIf="childCol.BadgeFn" class="badge" [ngClass]="childCol.BadgeClassFn(childRow)">{{childCol.BadgeFn(childRow)}}</span>
+                                 </a>
+                                 <span *ngSwitchCase="'Ngrid2InputColumn'" class="input-group">                                                        
+                                    <input class="form-control" [ngClass]="childCol.ClassFn(childRow)"  [(ngModel)]="childRow.InputBind" ng-readonly="childCol.DisabledFn(childRow)" (ngModelChange)="childRow.isNgNgridDirty=true;setColValue(childCol,childRow,childRow.InputBind)" placeholder="{{childCol.NullOrEmptyFn(childRow)}}" type="{{childCol.InputTypeFn(childRow)}}" />
+                                 </span>
+                                <span *ngSwitchDefault [ngClass]="childCol.ClassFn ? childCol.ClassFn(childRow) : ''">
+                                    {{childCol.TextFn ?  childCol.TextFn(childRow) :  getColValue(childCol,childRow)}}
+                                    <span *ngIf="childCol.IconFn" [ngClass]="childCol.IconFn(row)"></span>
+                                    <span *ngIf="childCol.BadgeFn" class="badge" [ngClass]="childCol.BadgeClass">{{childCol.BadgeFn(childRow)}}</span>
+                                </span>
+                              </span>
+                          </td>
+                      </tr>
+                  </table>
+                  <!-- <table class="table table-condensed table-bordered table-striped" *ngIf="rowFooterdefinitions.length > 0">
+                      <tr *ngFor="let rowFooter of rowFooterdefinitions">
+                          <td *ngFor="let footerItem of rowFooter">
+                              <span [ngSwitch]="footerItem.ColumnType">
+                                  <span *ngSwitchCase="ngNGridButton">
+                                      <span class="btn-group">
+                                          <button class="btn {{footerItem.ClassFn(row)}}" data-toggle="tooltip" data-placement="right" title="{{footerItem.TooltipFn(row)}}" (click)="footerItem.ClickFn(row)" [disabled]="footerItem.DisabledFn(row)">
+                                              <span *ngIf="footerItem.GlyphFn" class="glyphicon {{footerItem.GlyphFn(row)}}"></span>
+                                              <span *ngIf="footerItem.BadgeFn" class="badge" [ngClass]="footerItem.BadgeClass">{{footerItem.BadgeFn(row)}}</span>
+                                              {{footerItem.TextFn(row)}}
+                                          </button>
+                                      </span>
+                                  </span>
+                                  <span *ngSwitchCase="ngNGridLabel">
+                                      <span class="label label-xs {{footerItem.ClassFn(row)}}" data-toggle="tooltip" data-placement="right" title="{{footerItem.TooltipFn(row)}}">
+                                          <span *ngIf="footerItem.GlyphFn" class="glyphicon {{footerItem.GlyphFn(row)}}"></span>
+                                          <span *ngIf="rowFooter.BadgeFn" class="badge" [ngClass]="footerItem.BadgeClass">{{footerItem.BadgeFn(row)}}</span>
+                                          {{footerItem.TextFn(row)}}
+                                      </span>
+                                  </span>
+                                  <span *ngSwitchDefault [ngClass]="footerItem.ClassFn(row)">
+                                      {{footerItem.TextFn(row)}}
+                                  </span>
+                              </span>
+                          </td>
+                      </tr>
+                  </table> -->
+              </td>
+            </tr>
+          </ng-container>
+
+         
+         
+      </table>
+      <!-- TODO: Create progress bar for rows loading -->
+      <!-- <progressbar *ngIf="rowsLoading" class="active progress-striped" value="100" type="primary">
+          <b><i>{{rowsLoadingText}}</i></b>
+      </progressbar> -->
+      <!-- <div>
+        <i class="fas fa-stroopwafel"></i>            
+        <div *ngFor="let r of rows">           
+            {{showObject(r)}}                              
+        </div>                    
+     </div> -->
+   </div>  
+</div>
+
