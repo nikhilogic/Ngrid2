@@ -5,12 +5,10 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
-import { HeroesComponent } from './heroes/heroes.component';
 import { NgNgrid2Component } from './ng-ngrid2/ng-ngrid2.component';
 @NgModule({
   declarations: [
-    AppComponent,
-    HeroesComponent,
+    AppComponent,    
     NgNgrid2Component
   ],
   imports: [
