@@ -655,7 +655,8 @@ removeColFilters(col: Ngrid2DefaultColumn) : void {
 
  getColumnType(c: Ngrid2DefaultColumn): string 
  {
-     return c.constructor.name;
+     //return c.constructor.name; bug in angular prod deployment prevents use of this
+     return c.columnType;
  }
 
  compareFn(selVa1: object, selVal2: object): boolean {

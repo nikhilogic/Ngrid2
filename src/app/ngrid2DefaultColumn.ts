@@ -8,6 +8,8 @@ export class Ngrid2DefaultColumn
     isNgNgridSelected: boolean;        
     DisableFilter: boolean;
     dropDownFilterInput: string;
+    readonly columnType: string = "Ngrid2DefaultColumn";
+   
 
     DisplayName: () => string;  
 
@@ -34,18 +36,20 @@ export class Ngrid2DefaultColumn
 
 export class Ngrid2ButtonColumn extends Ngrid2DefaultColumn
 {
-    
+    readonly columnType: string = "Ngrid2ButtonColumn";
     ClickFn: (r : Ngrid2Row) => void;
-    DisabledFn: (r : Ngrid2Row) => boolean;
+    DisabledFn: (r : Ngrid2Row) => boolean;    
 }
 
 export class Ngrid2InputColumn extends Ngrid2ButtonColumn
 {    
+    readonly columnType: string = "Ngrid2InputColumn";
     InputTypeFn: (r : Ngrid2Row) => string;    
 }
 
 export class Ngrid2SelectColumn extends Ngrid2ButtonColumn
 {    
+    readonly columnType: string = "Ngrid2SelectColumn";
     SelectFn: (r : Ngrid2Row) => object[];
     SelectValue: string;
     SelectKey: string;
@@ -53,17 +57,20 @@ export class Ngrid2SelectColumn extends Ngrid2ButtonColumn
 
 export class Ngrid2LinkColumn extends Ngrid2ButtonColumn
 {    
+    readonly columnType: string = "Ngrid2LinkColumn";
     UrlFn: (r : Ngrid2Row) => string;
     
 }
 
 export class Ngrid2DateColumn extends Ngrid2ButtonColumn
 {    
+    readonly columnType: string = "Ngrid2DateColumn";
     DateFormatFn: (r : Ngrid2Row) => string;    
 }
 
 export class Ngrid2NumberColumn extends Ngrid2ButtonColumn
 {    
+    columnType: string = "Ngrid2NumberColumn";
     DateFormatFn: (r : Ngrid2Row) => string;    
 }
 //date
