@@ -449,23 +449,24 @@ export class AppComponent implements OnInit {
       newrow.Col7 = index * 100;
 
       newrow.Children = [];
-      var childRow = {
-        Col1: "asdasdasd",
-        Col2:  this.color_array[index],
-        Col3: this.color_array[index],
-        Col4:  {
-        selKey: "abc",
-        selVal: "1"                
-        },
-        Col5: this.color_array[index],        
-        Col6:  tempDate,
-        Col7: index * 100,
-        Index: 0        
-      }
-      newrow.Children.push(childRow);
 
-      this.rows.push(newrow);
-      
+      for (let iChildRow = 0; iChildRow < 5; iChildRow++) {        
+        var childRow = {
+          Col1: this.color_array[iChildRow],
+          Col2: this.color_array[iChildRow],
+          Col3: this.color_array[iChildRow],
+          Col4:  {
+          selKey: "abc",
+          selVal: "1"                
+          },
+          Col5: this.color_array[iChildRow],        
+          Col6:  tempDate,
+          Col7: index * 100,
+          Index: 0        
+        }
+        newrow.Children.push(childRow);
+      }
+      this.rows.push(newrow);      
     }
         
   }  

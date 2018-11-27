@@ -695,11 +695,23 @@ getRowIcon(index: number, row: any) : string {
         }
         else if (colType == 'Ngrid2SelectColumn')
         {            
-          r.SelectBind  = this.getColValue(c,r);
-          //console.info("****" + JSON.stringify(  r["SelectBind"]));
+          r.SelectBind  = this.getColValue(c,r);          
         }
         
-        //r["SelectBind"]= this.getColValue(c,r);        
+        r.Children.forEach(childRow => {
+            this.childColumndefinitions.forEach(childCol => 
+            {
+                var childColType = this.getColumnType(childCol);
+                if(childColType == 'Ngrid2InputColumn')
+                {
+                    childRow.InputBind  = this.getColValue(childCol,childRow);
+                }
+                else if (childColType == 'Ngrid2SelectColumn')
+                {   
+                    childRow.SelectBind  = this.getColValue(childCol,childRow);
+                }
+            });
+        });                
         c.DisableFilter = false;
       })      
     });
