@@ -1,6 +1,5 @@
 // Add-AppxPackage -register “C:\windows\SystemApps\Microsoft.MicrosoftEdgeDevToolsClient_8wekyb3d8bbwe\AppxManifest.xml” -DisableDevelopmentMode -Confirm:$false
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Ngrid2 } from '../ngrid2';
 import {
   trigger,
   state,
@@ -12,9 +11,8 @@ import { Ngrid2FilterParams } from '../ngrid2FilterParams';
 import { Ngrid2Filter } from '../ngrid2Filter';
 import { Ngrid2DropdownFilter } from '../ngrid2DropdownFilter';
 import { Ngrid2DefaultColumn } from '../ngrid2DefaultColumn';
-import { JsonPipe } from '@angular/common';
 import { NgbDropdown,NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
-import { toDate } from '@angular/common/src/i18n/format_date';
+import { INgrid2Row } from '../ngrid2Row';
 
 @Component({
   selector: 'app-ng-ngrid2',
@@ -22,12 +20,10 @@ import { toDate } from '@angular/common/src/i18n/format_date';
   styleUrls: ['./ng-ngrid2.component.css'],
   animations: [
     trigger('stretchAnimate', [
-      state('inactive', style({
-        // backgroundColor: '#eee',
+      state('inactive', style({        
         transform: 'scale(1)'
       })),
-      state('active',   style({
-        // backgroundColor: '#cfd8dc',
+      state('active',   style({        
         transform: 'scale(1.1)'
       })),
       transition('inactive => active', animate('100ms ease-in')),
@@ -37,18 +33,14 @@ import { toDate } from '@angular/common/src/i18n/format_date';
 })
 
 export class NgNgrid2Component implements OnInit {
-
-  //@Input() gridObj  : Ngrid2; 
-
   @Output() gridFiltersChanged = new EventEmitter<Ngrid2FilterParams>();
-
   @Input() columnClass: string;
   @Input() showChildrenCount:boolean;
   @Input() columnDefinitions: Ngrid2DefaultColumn[];
   @Input() childColumndefinitions: Ngrid2DefaultColumn[]; 
   @Input() childPropertynames:  string[];
   @Input() rowFooterdefinitions:  object[];
-  @Input() rows:  any[]; 
+  @Input() rows:  INgrid2Row[]; 
   @Input() rowsLoading: boolean;
   @Input() rowsLoadingText: string;
   @Input() gridPageSize: number;
@@ -149,7 +141,7 @@ export class NgNgrid2Component implements OnInit {
     this.allRowsSelected = !this.allRowsSelected;
   }
 
-  getRowClass(row: any) : string 
+  getRowClass(row: INgrid2Row) : string 
   {
     if (row.isNgNgridMarkedForDelete) {
         return 'table-danger';
@@ -169,7 +161,7 @@ export class NgNgrid2Component implements OnInit {
     return '';
   }
 
-  childRowsCount(row: any) : number
+  childRowsCount(row: INgrid2Row) : number
   {    
     var childRecCount = 0;
     for (var i = 0; i < this.childPropertynames.length; i++) {
@@ -179,7 +171,7 @@ export class NgNgrid2Component implements OnInit {
     return childRecCount;
   }
 
-  canShowRecord(row :any) :boolean {    
+  canShowRecord(row :INgrid2Row) :boolean {    
     
     if (this.columnFilters != null) {                
         var rowMatched = true;
@@ -219,7 +211,7 @@ export class NgNgrid2Component implements OnInit {
     return true; //no filters for the row
 }
 
-  filteredRows(): any[]
+  filteredRows(): INgrid2Row[]
   {      
 
     
@@ -250,7 +242,7 @@ export class NgNgrid2Component implements OnInit {
      );    
   }
   
-  getChildRows(row: any, childColName: string): any {
+  getChildRows(row: INgrid2Row, childColName: string): INgrid2Row[] {
       console.info(childColName);
     //return this.getValueFromPropertyString(row, childColName).sort((r1,r2) => 
     return row[childColName].sort((r1,r2) => 
@@ -274,7 +266,7 @@ export class NgNgrid2Component implements OnInit {
   }
 
 
-getValueFromPropertyString(row : any, propString: string) : string {
+getValueFromPropertyString(row : INgrid2Row, propString: string) : string {
   var objValue = null;
   if (propString != null) {
       var arrSplitSortProp = propString.split('.');
@@ -293,7 +285,7 @@ getValueFromPropertyString(row : any, propString: string) : string {
   return objValue;
 }
 
-getColValue(col: Ngrid2DefaultColumn, row: any) : string
+getColValue(col: Ngrid2DefaultColumn, row: INgrid2Row) : string
 {
   return this.getValueFromPropertyString(row, col.Name);
 }
@@ -305,7 +297,7 @@ showObject(o): string
   return s;
 }
 
-setColValue (col: Ngrid2DefaultColumn, row : any, value):void  {
+setColValue (col: Ngrid2DefaultColumn, row : INgrid2Row, value):void  {
 
   if (col.Name != null) {
       var arrSplitSortProp = col.Name.split('.');
@@ -313,7 +305,7 @@ setColValue (col: Ngrid2DefaultColumn, row : any, value):void  {
 
       if (arrayLen == 1) {
           //row[arrSplitSortProp[0]] = value;
-          row.Values.set(arrSplitSortProp[0],value);
+          row[arrSplitSortProp[0]] =value;
       }
       else {
           var tempObj = null;
@@ -367,7 +359,7 @@ setColValue (col: Ngrid2DefaultColumn, row : any, value):void  {
     *  2. DistinctCount - count of the distinct value (grouping)
     *  3. DisplayValue -  How the value is displayed in the filter
     */
-  generateDistinctColValues(col :Ngrid2DefaultColumn, rowSet :any[]) : Ngrid2DropdownFilter[]  {
+  generateDistinctColValues(col :Ngrid2DefaultColumn, rowSet :INgrid2Row[]) : Ngrid2DropdownFilter[]  {
     //console.info("generateDistinctColValues");        
     var distinctValues:Ngrid2DropdownFilter[] = [];
     //Iterate over the rows for that column to group distinct values
@@ -428,19 +420,19 @@ setColValue (col: Ngrid2DefaultColumn, row : any, value):void  {
     * Grid Filters
     * Sets the distinct values for the list in the column on expanding the filter menu
     */
-    setDistinctColValuesFiltered = function (col: Ngrid2DefaultColumn) 
+    setDistinctColValuesFiltered (col: Ngrid2DefaultColumn) : void
     {    
-      //console.info("setDistinctColValuesFiltered");        
-      var filteredRows = this.rows;// this.gridFilteredRows;
-      var vTempFilter = this.columnFilters.get(col.Name);
-      //Populate distinct values from the entire rows if this is the first filter applied or no other filter applied            
-      if (filteredRows.length == this.rows.length || (vTempFilter != null && vTempFilter.IsFirstFilter)) {
-          this.distinctColValues.set(col.Name , this.generateDistinctColValues(col, this.rows));
-      }
-      else if (!this.isColFilterApplied(col.Name)) {
-          // populate the filter list only when the filter does not already exist for the rows and we are not the first filtered column                
-          this.distinctColValues.set(col.Name,this.generateDistinctColValues(col, filteredRows));
-      }            
+        //console.info("setDistinctColValuesFiltered");        
+        var filteredRows = this.rows;// this.gridFilteredRows;
+        var vTempFilter = this.columnFilters.get(col.Name);
+        //Populate distinct values from the entire rows if this is the first filter applied or no other filter applied            
+        if (filteredRows.length == this.rows.length || (vTempFilter != null && vTempFilter.IsFirstFilter)) {
+            this.distinctColValues.set(col.Name , this.generateDistinctColValues(col, this.rows));
+        }
+        else if (!this.isColFilterApplied(col.Name)) {
+            // populate the filter list only when the filter does not already exist for the rows and we are not the first filtered column                
+            this.distinctColValues.set(col.Name,this.generateDistinctColValues(col, filteredRows));
+        }            
     }
 
   ondropDownToggle(isOpen: boolean,c: Ngrid2DefaultColumn) : void
@@ -629,21 +621,16 @@ removeColFilters(col: Ngrid2DefaultColumn) : void {
  
  updateDateRangeFilter (col: Ngrid2DefaultColumn, StartRange: Date  , EndRange: Date) {
     if (StartRange != null && EndRange != null) {
-
-        //for date range set end date to last moment of that day
-        
-            EndRange.setHours(23);
-            EndRange.setMinutes(59);
-            EndRange.setSeconds(59);
-        
-
+        //for date range set end date to last moment of that day        
+        EndRange.setHours(23);
+        EndRange.setMinutes(59);
+        EndRange.setSeconds(59);
         var distinctValues = this.distinctColValues.get(col.Name);
         var colFilters = [];
         for (var i = 0; i < distinctValues.length; i++) {                    
             var objToCompare = this.dateReviver(distinctValues[i].DistinctValue);
             
-            if (objToCompare >= StartRange && objToCompare <= EndRange) {
-                //logDebug('compare ' + objToCompare + ' Start:' + StartRange + ' End:' + EndRange);
+            if (objToCompare >= StartRange && objToCompare <= EndRange) {                
                 colFilters.push(distinctValues[i].DistinctValue);
             }                    
         }
@@ -655,19 +642,19 @@ removeColFilters(col: Ngrid2DefaultColumn) : void {
 
  getColumnType(c: Ngrid2DefaultColumn): string 
  {
-     //return c.constructor.name; bug in angular prod deployment prevents use of this
+     //
+     // NOTE: bug in angular prod deployment prevents use of this
+     // return c.constructor.name;
+     //
      return c.columnType;
  }
 
  compareFn(selVa1: object, selVal2: object): boolean {
-    var x =  JSON.stringify(selVa1) == JSON.stringify(selVal2);
-    //console.info("***c1=" +  JSON.stringify(c));
-    //console.info("***c2=" +  JSON.stringify(c2));
-    //console.info(x);
+    var x =  JSON.stringify(selVa1) == JSON.stringify(selVal2);    
     return x;
 }
 
-getRowIcon(index: number, row: any) : string {
+getRowIcon(index: number, row: INgrid2Row) : string {
     if (index == 0) {
         if (row.isNgNgridMarkedForDelete) {
             return 'fas fa-minus-square';
@@ -722,11 +709,4 @@ getRowIcon(index: number, row: any) : string {
     this.gridHeightStretchBottomOffset = 0;
     this.columnFilters = new Map<string,Ngrid2Filter>() ;
   }
-
-
-  
-  
-
-
-
 }

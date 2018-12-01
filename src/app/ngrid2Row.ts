@@ -1,5 +1,5 @@
 
-export class Ngrid2Row {    
+export interface INgrid2Row {    
     InputBind: string;
     SelectBind: string;
     isNgNgridOpen: boolean;
@@ -9,8 +9,5 @@ export class Ngrid2Row {
     isNgNgridDirty: boolean;
     isNgNgridSelected: boolean;
     isNgNgridUpdated: boolean;
-
-    Values = new Map<string,any>();
-
- 
+    Children: INgrid2Row[];
   }

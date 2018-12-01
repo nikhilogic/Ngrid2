@@ -1,8 +1,8 @@
-import { Component,Input, OnInit } from '@angular/core';
-import { Ngrid2 } from './ngrid2';
+import { Component, OnInit } from '@angular/core';
 import { Ngrid2ButtonColumn, Ngrid2DefaultColumn, Ngrid2InputColumn, Ngrid2SelectColumn, Ngrid2LinkColumn, Ngrid2DateColumn } from './ngrid2DefaultColumn';
-import { Ngrid2Filter } from './ngrid2Filter';
 import { Ngrid2DropdownFilter } from './ngrid2DropdownFilter';
+import { INgrid2Row } from './ngrid2Row';
+import { AppObj } from './appObj';
 
 
 @Component({
@@ -12,9 +12,6 @@ import { Ngrid2DropdownFilter } from './ngrid2DropdownFilter';
 })
 export class AppComponent implements OnInit {
   title = 'Something changed';
-
-  //appGridObj : Ngrid2 = new Ngrid2();
-
   color_array = ["primary","secondary","success","danger","warning","info","light","dark"];
 
   _debug_all_cols = true;
@@ -22,8 +19,6 @@ export class AppComponent implements OnInit {
    rows : any[];
    childColumndefinitions : Ngrid2DefaultColumn[];   
    childPropertynames:  string[]; 
-
-  //selectionList : object[] =
 
   getButtonCol(): Ngrid2DefaultColumn {
     var btnCol : Ngrid2ButtonColumn = new Ngrid2ButtonColumn();
@@ -33,31 +28,31 @@ export class AppComponent implements OnInit {
       return btnCol.Name;
     };
     btnCol.isNgNgridSelected = false;        
-    btnCol.ClassFn  = (r: any) => {
+    btnCol.ClassFn  = (r: INgrid2Row) => {
       return "btn-" + r[btnCol.Name];
     };
-    btnCol.CellClassFn = (r: any) => {
+    btnCol.CellClassFn = (r: INgrid2Row) => {
       return "";
     };
-    btnCol.TooltipFn = (r: any) => {      
+    btnCol.TooltipFn = (r: INgrid2Row) => {      
       return "hello";
     };
-    btnCol.BadgeFn = (r: any) => {      
+    btnCol.BadgeFn = (r: INgrid2Row) => {      
       return r.Index.toString();
     };
-    btnCol.BadgeClassFn = (r: any) => {      
+    btnCol.BadgeClassFn = (r: INgrid2Row) => {      
       return "badge-dark badge-pill";
     };
-    btnCol.BadgeUrlFn = (r: any) => {      
+    btnCol.BadgeUrlFn = (r: INgrid2Row) => {      
       return "https=//www.bing.com"
     };
-    btnCol.BadgeTargetFn = (r: any) => {      
+    btnCol.BadgeTargetFn = (r: INgrid2Row) => {      
       return "_top"; 
     };
-    btnCol.IconFn = (r: any) => {
+    btnCol.IconFn = (r: INgrid2Row) => {
       return "far fa-play-circle";
     };
-    btnCol.NullOrEmptyFn =  (r: any) => {      
+    btnCol.NullOrEmptyFn =  (r: INgrid2Row) => {      
       return "No Value";
     }        
     btnCol.FilterClassFn = (d: Ngrid2DropdownFilter) => {      
@@ -66,13 +61,13 @@ export class AppComponent implements OnInit {
     btnCol.FilterIconFn= (d: Ngrid2DropdownFilter) => {
       return "far fa-play-circle";
     };
-    btnCol.NullOrEmptyFn =  (r: any) => {      
+    btnCol.NullOrEmptyFn =  (r: INgrid2Row) => {      
         return "No Value";
     }
-    btnCol.ClickFn =  (r: any) => {
+    btnCol.ClickFn =  (r: INgrid2Row) => {
       alert("clicked");
     };
-    btnCol.DisabledFn =  (r: any) => {
+    btnCol.DisabledFn =  (r: INgrid2Row) => {
       return false;
     }
     return btnCol;
@@ -87,31 +82,31 @@ export class AppComponent implements OnInit {
        return defCol.Name;
      };
      defCol.isNgNgridSelected = false;        
-     defCol.ClassFn  = (r: any) => {
+     defCol.ClassFn  = (r: INgrid2Row) => {
        return "bg-"  + r[defCol.Name] ; //+ " text-white";
      };
-     defCol.CellClassFn = (r: any) => {
+     defCol.CellClassFn = (r: INgrid2Row) => {
        return "alert-" + this.color_array[r.Index];
      };
-     defCol.TooltipFn = (r: any) => {      
+     defCol.TooltipFn = (r: INgrid2Row) => {      
        return "hello";
      };
-     defCol.BadgeFn = (r: any) => {      
+     defCol.BadgeFn = (r: INgrid2Row) => {      
        return r.Index.toString();
      };
-     defCol.BadgeClassFn = (r: any) => {      
+     defCol.BadgeClassFn = (r: INgrid2Row) => {      
        return "badge-dark badge-pill";
      };
-     defCol.BadgeUrlFn = (r: any) => {      
+     defCol.BadgeUrlFn = (r: INgrid2Row) => {      
        return "https=//www.bing.com"
      };
-     defCol.BadgeTargetFn = (r: any) => {      
+     defCol.BadgeTargetFn = (r: INgrid2Row) => {      
        return "_top"; 
      };
-     defCol.IconFn = (r: any) => {
+     defCol.IconFn = (r: INgrid2Row) => {
        return "far fa-play-circle";
      };
-     defCol.NullOrEmptyFn =  (r: any) => {      
+     defCol.NullOrEmptyFn =  (r: INgrid2Row) => {      
        return "No Value";
      }        
      defCol.FilterClassFn = (d: Ngrid2DropdownFilter) => {      
@@ -120,7 +115,7 @@ export class AppComponent implements OnInit {
      defCol.FilterIconFn= (d: Ngrid2DropdownFilter) => {
        return "far fa-play-circle";
      };
-     defCol.NullOrEmptyFn =  (r: any) => {      
+     defCol.NullOrEmptyFn =  (r: INgrid2Row) => {      
          return "No Value";
      }
      return defCol; 
@@ -134,31 +129,31 @@ export class AppComponent implements OnInit {
       return inputCol.Name;
     };
     inputCol.isNgNgridSelected = false;        
-    inputCol.ClassFn  = (r: any) => {
+    inputCol.ClassFn  = (r: INgrid2Row) => {
       return "text-"  + r[inputCol.Name] ; //+ " text-white";
     };
-    inputCol.CellClassFn = (r: any) => {
+    inputCol.CellClassFn = (r: INgrid2Row) => {
       return "";
     };
-    inputCol.TooltipFn = (r: any) => {      
+    inputCol.TooltipFn = (r: INgrid2Row) => {      
       return "hello";
     };
-    inputCol.BadgeFn = (r: any) => {      
+    inputCol.BadgeFn = (r: INgrid2Row) => {      
       return r.Index.toString();
     };
-    inputCol.BadgeClassFn = (r: any) => {      
+    inputCol.BadgeClassFn = (r: INgrid2Row) => {      
       return "badge-dark badge-pill";
     };
-    inputCol.BadgeUrlFn = (r: any) => {      
+    inputCol.BadgeUrlFn = (r: INgrid2Row) => {      
       return "https=//www.bing.com"
     };
-    inputCol.BadgeTargetFn = (r: any) => {      
+    inputCol.BadgeTargetFn = (r: INgrid2Row) => {      
       return "_top"; 
     };
-    inputCol.IconFn = (r: any) => {
+    inputCol.IconFn = (r: INgrid2Row) => {
       return "far fa-play-circle";
     };
-    inputCol.NullOrEmptyFn =  (r: any) => {      
+    inputCol.NullOrEmptyFn =  (r: INgrid2Row) => {      
       return "No Value";
     }        
     inputCol.FilterClassFn = (d: Ngrid2DropdownFilter) => {      
@@ -167,10 +162,10 @@ export class AppComponent implements OnInit {
     inputCol.FilterIconFn= (d: Ngrid2DropdownFilter) => {
       return "far fa-play-circle";
     };
-    inputCol.NullOrEmptyFn =  (r: any) => {      
+    inputCol.NullOrEmptyFn =  (r: INgrid2Row) => {      
         return "No Value";
     }
-    inputCol.InputTypeFn =  (r: any) => {
+    inputCol.InputTypeFn =  (r: INgrid2Row) => {
       return "text";
     }
     return inputCol;
@@ -185,31 +180,31 @@ export class AppComponent implements OnInit {
       return selCol.Name;
     };
     selCol.isNgNgridSelected = false;        
-    selCol.ClassFn  = (r: any) => {
+    selCol.ClassFn  = (r: INgrid2Row) => {
       return "bg-"  + r[selCol.Name] ; //+ " text-white";
     };
-    selCol.CellClassFn = (r: any) => {
+    selCol.CellClassFn = (r: INgrid2Row) => {
       return "";
     };
-    selCol.TooltipFn = (r: any) => {      
+    selCol.TooltipFn = (r: INgrid2Row) => {      
       return "hello";
     };
-    selCol.BadgeFn = (r: any) => {      
+    selCol.BadgeFn = (r: INgrid2Row) => {      
       return r.Index.toString();
     };
-    selCol.BadgeClassFn = (r: any) => {      
+    selCol.BadgeClassFn = (r: INgrid2Row) => {      
       return "badge-dark badge-pill";
     };
-    selCol.BadgeUrlFn = (r: any) => {      
+    selCol.BadgeUrlFn = (r: INgrid2Row) => {      
       return "https=//www.bing.com"
     };
-    selCol.BadgeTargetFn = (r: any) => {      
+    selCol.BadgeTargetFn = (r: INgrid2Row) => {      
       return "_top"; 
     };
-    selCol.IconFn = (r: any) => {
+    selCol.IconFn = (r: INgrid2Row) => {
       return "far fa-play-circle";
     };
-    selCol.NullOrEmptyFn =  (r: any) => {      
+    selCol.NullOrEmptyFn =  (r: INgrid2Row) => {      
       return "No Value";
     }        
     selCol.FilterClassFn = (d: Ngrid2DropdownFilter) => {      
@@ -218,7 +213,7 @@ export class AppComponent implements OnInit {
     selCol.FilterIconFn= (d: Ngrid2DropdownFilter) => {
       return "far fa-play-circle";
     };
-    selCol.NullOrEmptyFn =  (r: any) => {      
+    selCol.NullOrEmptyFn =  (r: INgrid2Row) => {      
         return "No Value";
     };    
     selCol.SelectFn = (r : any) => 
@@ -252,31 +247,31 @@ export class AppComponent implements OnInit {
       return linkCol.Name;
     };
     linkCol.isNgNgridSelected = false;        
-    linkCol.ClassFn  = (r: any) => {
+    linkCol.ClassFn  = (r: INgrid2Row) => {
       return "text-"  + r[linkCol.Name] ; //+ " text-white";
     };
-    linkCol.CellClassFn = (r: any) => {
+    linkCol.CellClassFn = (r: INgrid2Row) => {
       return "";
     };
-    linkCol.TooltipFn = (r: any) => {      
+    linkCol.TooltipFn = (r: INgrid2Row) => {      
       return "hello";
     };
-    linkCol.BadgeFn = (r: any) => {      
+    linkCol.BadgeFn = (r: INgrid2Row) => {      
       return r.Index.toString();
     };
-    linkCol.BadgeClassFn = (r: any) => {      
+    linkCol.BadgeClassFn = (r: INgrid2Row) => {      
       return "badge-dark badge-pill";
     };
-    linkCol.BadgeUrlFn = (r: any) => {      
+    linkCol.BadgeUrlFn = (r: INgrid2Row) => {      
       return "https=//www.bing.com"
     };
-    linkCol.BadgeTargetFn = (r: any) => {      
+    linkCol.BadgeTargetFn = (r: INgrid2Row) => {      
       return "_top"; 
     };
-    linkCol.IconFn = (r: any) => {
+    linkCol.IconFn = (r: INgrid2Row) => {
       return "far fa-play-circle";
     };
-    linkCol.NullOrEmptyFn =  (r: any) => {      
+    linkCol.NullOrEmptyFn =  (r: INgrid2Row) => {      
       return "No Value";
     }        
     linkCol.FilterClassFn = (d: Ngrid2DropdownFilter) => {      
@@ -285,10 +280,10 @@ export class AppComponent implements OnInit {
     linkCol.FilterIconFn= (d: Ngrid2DropdownFilter) => {
       return "far fa-play-circle";
     };
-    linkCol.NullOrEmptyFn =  (r: any) => {      
+    linkCol.NullOrEmptyFn =  (r: INgrid2Row) => {      
         return "No Value";
     };
-    linkCol.UrlFn= (r: any) => {  return "www.google.com" };
+    linkCol.UrlFn= (r: INgrid2Row) => {  return "www.google.com" };
     return linkCol;
   }
 
@@ -300,31 +295,31 @@ export class AppComponent implements OnInit {
       return dateCol.Name;
     };
     dateCol.isNgNgridSelected = false;        
-    dateCol.ClassFn  = (r: any) => {
+    dateCol.ClassFn  = (r: INgrid2Row) => {
       return ""; //+ " text-white";
     };
-    dateCol.CellClassFn = (r: any) => {
+    dateCol.CellClassFn = (r: INgrid2Row) => {
       return "";
     };
-    dateCol.TooltipFn = (r: any) => {      
+    dateCol.TooltipFn = (r: INgrid2Row) => {      
       return "hello";
     };
-    dateCol.BadgeFn = (r: any) => {      
+    dateCol.BadgeFn = (r: INgrid2Row) => {      
       return r.Index.toString();
     };
-    dateCol.BadgeClassFn = (r: any) => {      
+    dateCol.BadgeClassFn = (r: INgrid2Row) => {      
       return "badge-dark badge-pill";
     };
-    dateCol.BadgeUrlFn = (r: any) => {      
+    dateCol.BadgeUrlFn = (r: INgrid2Row) => {      
       return "https=//www.bing.com"
     };
-    dateCol.BadgeTargetFn = (r: any) => {      
+    dateCol.BadgeTargetFn = (r: INgrid2Row) => {      
       return "_top"; 
     };
-    dateCol.IconFn = (r: any) => {
+    dateCol.IconFn = (r: INgrid2Row) => {
       return "far fa-play-circle";
     };
-    dateCol.NullOrEmptyFn =  (r: any) => {      
+    dateCol.NullOrEmptyFn =  (r: INgrid2Row) => {      
       return "No Value";
     }        
     dateCol.FilterClassFn = (d: Ngrid2DropdownFilter) => {      
@@ -333,10 +328,10 @@ export class AppComponent implements OnInit {
     dateCol.FilterIconFn= (d: Ngrid2DropdownFilter) => {
       return "far fa-play-circle";
     };
-    dateCol.NullOrEmptyFn =  (r: any) => {      
+    dateCol.NullOrEmptyFn =  (r: INgrid2Row) => {      
         return "No Value";
     };
-    dateCol.DateFormatFn=  (r: any) => {      
+    dateCol.DateFormatFn=  (r: INgrid2Row) => {      
       return "MM/dd/yyyy";
     };
     return dateCol;
@@ -350,31 +345,31 @@ export class AppComponent implements OnInit {
       return numCol.Name;
     };
     numCol.isNgNgridSelected = false;        
-    numCol.ClassFn  = (r: any) => {
+    numCol.ClassFn  = (r: INgrid2Row) => {
       return "h" + r[numCol.Name]/100;
     };
-    numCol.CellClassFn = (r: any) => {
+    numCol.CellClassFn = (r: INgrid2Row) => {
       return "";
     };
-    numCol.TooltipFn = (r: any) => {      
+    numCol.TooltipFn = (r: INgrid2Row) => {      
       return "hello";
     };
-    numCol.BadgeFn = (r: any) => {      
+    numCol.BadgeFn = (r: INgrid2Row) => {      
       return r.Index.toString();
     };
-    numCol.BadgeClassFn = (r: any) => {      
+    numCol.BadgeClassFn = (r: INgrid2Row) => {      
       return "badge-dark badge-pill";
     };
-    numCol.BadgeUrlFn = (r: any) => {      
+    numCol.BadgeUrlFn = (r: INgrid2Row) => {      
       return "https=//www.bing.com"
     };
-    numCol.BadgeTargetFn = (r: any) => {      
+    numCol.BadgeTargetFn = (r: INgrid2Row) => {      
       return "_top"; 
     };
-    numCol.IconFn = (r: any) => {
+    numCol.IconFn = (r: INgrid2Row) => {
       return "far fa-play-circle";
     };
-    numCol.NullOrEmptyFn =  (r: any) => {      
+    numCol.NullOrEmptyFn =  (r: INgrid2Row) => {      
       return "No Value";
     }        
     numCol.FilterClassFn = (d: Ngrid2DropdownFilter) => {      
@@ -383,7 +378,7 @@ export class AppComponent implements OnInit {
     numCol.FilterIconFn= (d: Ngrid2DropdownFilter) => {
       return "far fa-play-circle";
     };
-    numCol.NullOrEmptyFn =  (r: any) => {      
+    numCol.NullOrEmptyFn =  (r: INgrid2Row) => {      
         return "No Value";
     }        
     return numCol;
@@ -426,7 +421,7 @@ export class AppComponent implements OnInit {
 
    
     for (let index = 0; index < this.color_array.length; index++) {
-      var newrow : any = new Object();
+      var newrow : AppObj = new AppObj();
       newrow.Index = index;
       newrow.isNgNgridOpen = false;
       newrow.Col1  = this.color_array[index];
@@ -451,19 +446,18 @@ export class AppComponent implements OnInit {
       newrow.Children = [];
 
       for (let iChildRow = 0; iChildRow < 5; iChildRow++) {        
-        var childRow = {
-          Col1: this.color_array[iChildRow],
-          Col2: this.color_array[iChildRow],
-          Col3: this.color_array[iChildRow],
-          Col4:  {
+        var childRow : AppObj = new AppObj();
+        childRow.Col1 = this.color_array[iChildRow];
+        childRow.Col2 = this.color_array[iChildRow];
+        childRow.Col3 = this.color_array[iChildRow];
+        childRow.Col4 =  {
           selKey: "abc",
           selVal: "1"                
-          },
-          Col5: this.color_array[iChildRow],        
-          Col6:  tempDate,
-          Col7: index * 100,
-          Index: 0        
-        }
+          };
+        childRow.Col5 = this.color_array[iChildRow];
+        childRow.Col6 = tempDate;
+        childRow.Col7 = index * 100;
+        childRow.Index = 0;        
         newrow.Children.push(childRow);
       }
       this.rows.push(newrow);      
