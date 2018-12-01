@@ -123,6 +123,41 @@
           }
         }
       }
+    },
+    "ngrid2": {
+      "root": "projects/ngrid2",
+      "sourceRoot": "projects/ngrid2/src",
+      "projectType": "library",
+      "prefix": "ng",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/ngrid2/tsconfig.lib.json",
+            "project": "projects/ngrid2/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/ngrid2/src/test.ts",
+            "tsConfig": "projects/ngrid2/tsconfig.spec.json",
+            "karmaConfig": "projects/ngrid2/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/ngrid2/tsconfig.lib.json",
+              "projects/ngrid2/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
   },
   "defaultProject": "ngNgrid2"

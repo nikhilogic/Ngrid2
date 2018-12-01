@@ -1,0 +1,19 @@
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'ng-ngrid2',
+  template: `
+    <p>
+      ngrid2 works!
+    </p>
+  `,
+  styles: []
+})
+export class Ngrid2Component implements OnInit {
+
+  constructor() { }
+
+  ngOnInit() {
+  }
+
+}

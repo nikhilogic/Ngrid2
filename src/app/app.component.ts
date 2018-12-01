@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Ngrid2ButtonColumn, Ngrid2DefaultColumn, Ngrid2InputColumn, Ngrid2SelectColumn, Ngrid2LinkColumn, Ngrid2DateColumn } from './ngrid2DefaultColumn';
-import { Ngrid2DropdownFilter } from './ngrid2DropdownFilter';
-import { INgrid2Row } from './ngrid2Row';
+import { Ngrid2ButtonColumn, Ngrid2DefaultColumn, Ngrid2InputColumn, Ngrid2SelectColumn, Ngrid2LinkColumn, Ngrid2DateColumn,Ngrid2DropdownFilter,INgrid2Row } from 'ngrid2';
 import { AppObj } from './appObj';
 
 

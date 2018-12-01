@@ -1,4 +1,4 @@
-// Add-AppxPackage -register “C:\windows\SystemApps\Microsoft.MicrosoftEdgeDevToolsClient_8wekyb3d8bbwe\AppxManifest.xml” -DisableDevelopmentMode -Confirm:$false
+
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import {
   trigger,
@@ -7,17 +7,17 @@ import {
   animate,
   transition
 } from '@angular/animations';
-import { Ngrid2FilterParams } from '../ngrid2FilterParams';
-import { Ngrid2Filter } from '../ngrid2Filter';
-import { Ngrid2DropdownFilter } from '../ngrid2DropdownFilter';
-import { Ngrid2DefaultColumn } from '../ngrid2DefaultColumn';
+import { Ngrid2FilterParams } from './ngrid2FilterParams';
+import { Ngrid2Filter } from './ngrid2Filter';
+import { Ngrid2DropdownFilter } from './ngrid2DropdownFilter';
+import { Ngrid2DefaultColumn } from './ngrid2DefaultColumn';
 import { NgbDropdown,NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
-import { INgrid2Row } from '../ngrid2Row';
+import { INgrid2Row } from './ngrid2Row';
 
 @Component({
-  selector: 'app-ng-ngrid2',
-  templateUrl: './ng-ngrid2.component.html',
-  styleUrls: ['./ng-ngrid2.component.css'],
+  selector: 'ng-ngrid2',
+  templateUrl: './ngrid2.component.html',
+  styleUrls: ['./ngrid2.component.css'],
   animations: [
     trigger('stretchAnimate', [
       state('inactive', style({        
@@ -32,7 +32,7 @@ import { INgrid2Row } from '../ngrid2Row';
   ]  
 })
 
-export class NgNgrid2Component implements OnInit {
+export class Ngrid2Component implements OnInit {
   @Output() gridFiltersChanged = new EventEmitter<Ngrid2FilterParams>();
   @Input() columnClass: string;
   @Input() showChildrenCount:boolean;
@@ -619,26 +619,35 @@ removeColFilters(col: Ngrid2DefaultColumn) : void {
         return null;
     };
  
- updateDateRangeFilter (col: Ngrid2DefaultColumn, StartRange: Date  , EndRange: Date) {
-    if (StartRange != null && EndRange != null) {
-        //for date range set end date to last moment of that day        
-        EndRange.setHours(23);
-        EndRange.setMinutes(59);
-        EndRange.setSeconds(59);
-        var distinctValues = this.distinctColValues.get(col.Name);
-        var colFilters = [];
-        for (var i = 0; i < distinctValues.length; i++) {                    
-            var objToCompare = this.dateReviver(distinctValues[i].DistinctValue);
+    updateDateRangeFilter (col: Ngrid2DefaultColumn, StartRange: NgbDateStruct  , EndRange: NgbDateStruct) {
+        if (StartRange != null && EndRange != null) {
+    
+            //for date range set end date to last moment of that day
+            var dtStartRange = new Date(StartRange.year,StartRange.month,StartRange.day);
             
-            if (objToCompare >= StartRange && objToCompare <= EndRange) {                
-                colFilters.push(distinctValues[i].DistinctValue);
-            }                    
-        }
-        if (colFilters.length > 0) {
-            this.addColumnFilters(col.Name, colFilters,false);
+            var dtEndRange = new Date(EndRange.year,EndRange.month,EndRange.day);
+    
+        
+            
+            // EndRange.setHours(23);
+            // EndRange.setMinutes(59);
+            // EndRange.setSeconds(59);
+        
+    
+            var distinctValues = this.distinctColValues.get(col.Name);
+            var colFilters = [];
+            for (var i = 0; i < distinctValues.length; i++) {                    
+                var objToCompare = this.dateReviver(distinctValues[i].DistinctValue);            
+                if (objToCompare >= dtStartRange && objToCompare <= dtEndRange) {
+                    //logDebug('compare ' + objToCompare + ' Start:' + StartRange + ' End:' + EndRange);
+                    colFilters.push(distinctValues[i].DistinctValue);
+                }                    
+            }
+            if (colFilters.length > 0) {
+                this.addColumnFilters(col.Name, colFilters,false);
+            }
         }
     }
-}
 
  getColumnType(c: Ngrid2DefaultColumn): string 
  {

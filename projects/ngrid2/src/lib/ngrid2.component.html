@@ -103,8 +103,8 @@
                                         <span class="badge badge-primary">Range</span> {{ngNgridStartDate.month}}/{{ngNgridStartDate.day}}/{{ngNgridStartDate.year}}
                                          - {{ngNgridEndDate.month}}/{{ngNgridEndDate.day}}/{{ngNgridEndDate.year}}
                                     </div>
-                                    <ngb-datepicker #dtStart [(ngModel)]="ngNgridStartDate" (navigate)="date = $event.next" [maxDate]="ngNgridEndDate" (select)="updateDateRangeFilter(c.Name,ngNgr)" ></ngb-datepicker>                                    
-                                    <ngb-datepicker #dtEnd [(ngModel)]="ngNgridEndDate" (navigate)="date = $event.next" [minDate]="ngNgridStartDate"></ngb-datepicker>                                                                
+                                    <ngb-datepicker #dtStart [(ngModel)]="ngNgridStartDate" [maxDate]="ngNgridEndDate" (select)="updateDateRangeFilter(c.Name,ngNgridStartDate,ngNgridEndDate)" ></ngb-datepicker>                                    
+                                    <ngb-datepicker #dtEnd [(ngModel)]="ngNgridEndDate" [minDate]="ngNgridStartDate"></ngb-datepicker>                                                                
                             </li>
                             <!-- TODO: numbering range filter -->
                             <!-- <li class="dropdown-item ngngrid-dropdown" *ngIf="getColumnType(c)=='Ngrid2NumberColumn'">
@@ -139,7 +139,7 @@
                             </li>
                         -->
                             <li class="dropdown-divider"></li>                            
-                            <li class="dropdown-item ngngrid-dropdown" *ngFor="let distinctObj of ngrid2DropdownFilteredObjects(c)" (click)="addColumnFilters(c.Name,[distinctObj.DistinctValue]);$event.stopPropagation()" style="cursor: pointer">                                                            
+                            <li class="dropdown-item ngngrid-dropdown" *ngFor="let distinctObj of ngrid2DropdownFilteredObjects(c)" (click)="addColumnFilters(c.Name,[distinctObj.DistinctValue],false);$event.stopPropagation()" style="cursor: pointer">                                                            
                                 <input type="checkbox" [ngModel]="isColFiltered(c.Name,distinctObj.DistinctValue)"/>
                                 <small style="font-weight:normal"> 
                                     <span [ngClass]="c.FilterClassFn(distinctObj)" style="margin-right:2px">

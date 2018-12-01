@@ -1,4 +1,4 @@
-import { INgrid2Row } from "./ngrid2Row";
+import { INgrid2Row } from "ngrid2";
 
 export class AppObj implements INgrid2Row
 {

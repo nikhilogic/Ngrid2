@@ -5,17 +5,17 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
-import { NgNgrid2Component } from './ng-ngrid2/ng-ngrid2.component';
+import { Ngrid2Component } from 'ngrid2';
 @NgModule({
   declarations: [
     AppComponent,    
-    NgNgrid2Component
+    Ngrid2Component
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
-    NgbModule.forRoot()
+    NgbModule
   ],
   providers: [],
   bootstrap: [AppComponent]
