@@ -330,6 +330,8 @@ Apache-2.0
 @angular/core
 MIT
 
+ngrid2
+
 @angular/common
 MIT
 
