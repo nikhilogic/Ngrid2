@@ -116,23 +116,31 @@ export class Ngrid2Component implements OnInit {
     setGridTableStyle() : object 
     {
         var topPosition = document.getElementById('ngGridToolbar').getBoundingClientRect().bottom;
+        //var topPosition= document.getElementById('ngGridToolbar').clientHeight;
         var bottomPosition = 0;
+        console.info("1 top=" + topPosition + " bottom=" + bottomPosition);
         if (this.gridHeightStretchBottomOffset != null) {
             bottomPosition = this.gridHeightStretchBottomOffset;                
+            console.info("2.1 top=" + topPosition + " bottom=" + bottomPosition);
         }
         else {
             bottomPosition = window.innerHeight - this.gridHeightFixed - document.getElementById('ngGridToolbar').getBoundingClientRect().top;
+            console.info("2.2 top=" + topPosition + " bottom=" + bottomPosition);
         }
-        //console.info("top=" + topPosition + " bottom=" + bottomPosition);
+        console.info("3 top=" + topPosition + " bottom=" + bottomPosition);
         return { top: topPosition + 'px', bottom: bottomPosition + 'px' };
     };
 
     getStyle() : object {
+        
+        // console.info("getStyle Called");
         if (this.gridHeightStretchBottomOffset != null) {
+            //console.info("getStyle Called height:" +  (window.innerHeight - document.getElementById('ngGridToolbar').getBoundingClientRect().top - this.gridHeightStretchBottomOffset));
             //stretch to window                
             return { height: window.innerHeight - document.getElementById('ngGridToolbar').getBoundingClientRect().top - this.gridHeightStretchBottomOffset + 'px', width: 100 + '%' };
         }
         else {
+            //console.info("getStyle else called height: " + this.gridHeightFixed);
             return { height: this.gridHeightFixed + 'px', width: 100 + '%' };
         }
     }
@@ -717,5 +725,6 @@ getRowIcon(index: number, row: INgrid2Row) : string {
     this.filterCurrentPage=1;    
     this.gridHeightStretchBottomOffset = 0;
     this.columnFilters = new Map<string,Ngrid2Filter>() ;
+    
   }
 }

@@ -22,10 +22,8 @@
               "src/favicon.ico",
               "src/assets"
             ],
-            "styles": [
-              "node_modules/bootstrap/dist/css/bootstrap.css",
-              "node_modules/@fortawesome/fontawesome-free/css/all.css",
-              "src/styles.css"
+            "styles": [              
+              "src/styles.css"              
             ],
             "scripts": []
           },
@@ -134,8 +132,8 @@
           "builder": "@angular-devkit/build-ng-packagr:build",
           "options": {
             "tsConfig": "projects/ngrid2/tsconfig.lib.json",
-            "project": "projects/ngrid2/ng-package.json"
-          }
+            "project": "projects/ngrid2/ng-package.json"                       
+          }          
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",

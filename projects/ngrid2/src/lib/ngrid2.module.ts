@@ -15,6 +15,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     BrowserModule,
     BrowserAnimationsModule
   ],
-  exports: [Ngrid2Component]
+  exports: [Ngrid2Component]  
 })
 export class Ngrid2Module { }
