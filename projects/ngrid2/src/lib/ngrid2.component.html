@@ -2,86 +2,112 @@
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 
 <div [ngStyle]="getStyle()">
-        <nav id="ngGridToolbar" class="navbar navbar-dark fixed-top bg-light">
-                <div class="container-fluid">         
-                    <div class="btn-toolbar">                         
-                        <span class="btn-group btn-group-toggle">
-                            <label
-                                class="btn btn-primary"                                                        
-                                ngbButtonLabel                                                         
-                                data-toggle="tooltip" 
-                                data-placement="right" 
-                                title="Show/Hide Settings" 
-                                btn-checkbox-true="true"                             
-                                btn-checkbox-false="false">                          
-                                <span class="fas fa-cog"></span>
-                                <input type="checkbox" ngbButton [(ngModel)]="showSettings">          
-                                &nbsp;         
-                                <span [ngClass]="showSettings? 'fas fa-caret-left':'fas fa-caret-right'"></span>
-                            </label>
-                        </span>
-                        &nbsp;                  
-                        <span class="btn-group btn-group-toggle" *ngIf="showSettings">                      
-                            <label class="btn-primary" ngbButtonLabel   data-toggle="tooltip" data-placement="right" title="Show/Hide Row Numbers" >                          
-                                <input type="checkbox" ngbButton [(ngModel)]="showRowNumbers" >
-                                Row #
-                            </label>
-                            <label class="btn-primary" ngbButtonLabel data-toggle="tooltip" data-placement="right" title="Show/Hide Row Selector">                          
-                                <input type="checkbox" ngbButton [(ngModel)]="showRowSelector" >
-                                Selectable Rows
-                            </label>
-                            <label class="btn-primary" ngbButtonLabel data-toggle="tooltip" data-placement="right" title="Show/Hide Children Count">                          
-                                <input type="checkbox" ngbButton [(ngModel)]="showChildrenCount" >
-                                Child Record Count
-                            </label>
-                        </span>
-                        &nbsp;
-                          <!-- <input id="fileUploadJson" type="file" accept=".json" onchange="angular.element(this).scope().on_fileUpload(this)" style="display:none" />
-                          <span class="btn-group ngngrid-animate-show" *ngIf="showSettings">
-                              <label class="btn btn-primary" (click)="importFromJson()" data-toggle="tooltip" data-placement="right" title="Import grid rows from json file">
-                                  Import <span class="glyphicon glyphicon-import"></span>
-                              </label>
-                              <label class="btn btn-primary" [disabled]="!isAnyRowSelected()" (click)="exportSelectedToJson()" data-toggle="tooltip" data-placement="right" title="Export selected rows to json file">
-                                  Export Selected <span class="glyphicon glyphicon-export"></span>
-                              </label>
-                          </span>-->
-                        <span class="btn-group">                        
-                            <button class="btn btn-primary" (click)="clearAllFilters()" [disabled]="!anyFiltersExist()" data-toggle="tooltip" data-placement="right" title="Clear All Filters">
-                                Clear all<i class="fas fa-filter"></i>
-                            </button>                                                    
-                        </span>               
-                    </div>
+    <nav id="ngGridToolbar" class="navbar navbar-dark fixed-top bg-light">        
+        <div class="container-fluid">         
+            <div class="btn-toolbar">                         
+                <span class="btn-group">                        
+                    <button class="btn btn-primary" (click)="clearAllFilters()" [disabled]="!anyFiltersExist()" data-toggle="tooltip" data-placement="right" title="Clear All Filters">
+                        Clear All<i class="fas fa-filter"></i>
+                    </button>                                                    
+                </span>  
+                &nbsp;
+                <span class="btn-group btn-group-toggle">
+                    <label
+                        class="btn btn-primary"                                                        
+                        ngbButtonLabel                                                         
+                        data-toggle="tooltip" 
+                        data-placement="right" 
+                        title="Show/Hide Settings" 
+                        btn-checkbox-true="true"                             
+                        btn-checkbox-false="false">                          
+                        <span class="fas fa-cog"></span>
+                        <input type="checkbox" ngbButton [(ngModel)]="showSettings">          
+                        &nbsp;         
+                        <span [ngClass]="showSettings? 'fas fa-caret-left':'fas fa-caret-right'"></span>
+                    </label>
+                </span>                                
+                <span class="btn-group btn-group-toggle" *ngIf="showSettings">                      
                     
-                    <span class="btn-toolbar justify-content-end"  >
-                        <span class="btn" onmouseover="" style="cursor:default"><b>{{gridCurrentPage}}</b>-<b>{{gridTotalPages()}}</b> of <b>{{rows.length}}</b></span> 
-                        <span class="input-group"  data-toggle="tooltip" data-placement="right" title="Records per Page">
-                            <span class="input-group-prepend">
-                                <span class="input-group-text"><b>Records</b> / <b>Page</b></span>
-                            </span>
-                            <select class="form-control" [(ngModel)]="gridPageSize">
-                                <option *ngFor="let number of pageSizeOptions">{{number}}</option>
-                            </select>
-                        </span>      
-                        &nbsp;          
-                        <span style="height:0;display: flex">
-                            <ngb-pagination   [collectionSize]="gridTotalPages()*10" [(page)]="gridCurrentPage"  [boundaryLinks]="true" ></ngb-pagination>
-                        </span>
+                    <label class="btn-light" ngbButtonLabel   data-toggle="tooltip" data-placement="right" title="Show/Hide Row Numbers" >                          
+                        <input type="checkbox" ngbButton [(ngModel)]="showRowNumbers" >
+                        Row #
+                    </label>
+                    <label class="btn-light" ngbButtonLabel data-toggle="tooltip" data-placement="right" title="Show/Hide Row Selector">                          
+                        <input type="checkbox" ngbButton [(ngModel)]="showRowSelector" >
+                        Selectable Rows
+                    </label>
+                    <label class="btn-light" ngbButtonLabel data-toggle="tooltip" data-placement="right" title="Show/Hide Children Count">                          
+                        <input type="checkbox" ngbButton [(ngModel)]="showChildrenCount" >
+                        Child Record Count
+                    </label>
+                    &nbsp;
+                    <label class="btn-light" ngbButtonLabel data-toggle="tooltip" data-placement="right" title="Import Records">                          
+                        <input #e_gridImport type="file" id="fileUploadJson" accept=".json" (change)="on_fileUpload(e_gridImport)" style="display: none">                        
+                        Import JSON
+                    </label>
+                    <!-- <div class="custom-file">
+                        <input #e_gridImport type="file" class="custom-file-input" id="fileUploadJson" accept=".json" (change)="on_fileUpload(e_gridImport)">
+                        <label class="custom-file-label" for="fileUploadJson" aria-describedby="inputGroupFileAddon">Choose file to import</label>
+                    </div> -->
+                    <!-- <div class="input-group-append">
+                        <span class="input-group-text" id="inputGroupFileAddon" >Upload</span>
+                    </div> -->
+                    <button class="btn-light" 
+                    [disabled]="!isAnyRowSelected()" 
+                    ngbButtonLabel 
+                    data-toggle="tooltip" 
+                    data-placement="right" 
+                    title="Show Json for selected rows" 
+                    (click)="exportSelectedToJson()" >Export To JSON</button>
+                </span>
+                    <!-- <input id="fileUploadJson" type="file" accept=".json" onchange="angular.element(this).scope().on_fileUpload(this)" style="display:none" />
+                    <span class="btn-group ngngrid-animate-show" *ngIf="showSettings">
+                        <label class="btn btn-primary" (click)="importFromJson()" data-toggle="tooltip" data-placement="right" title="Import grid rows from json file">
+                            Import <span class="glyphicon glyphicon-import"></span>
+                        </label>
+                        <label class="btn btn-primary" [disabled]="!isAnyRowSelected()" (click)="exportSelectedToJson()" data-toggle="tooltip" data-placement="right" title="Export selected rows to json file">
+                            Export Selected <span class="glyphicon glyphicon-export"></span>
+                        </label>
+                    </span>-->
+                            
+            </div>
+            
+            <span class="btn-toolbar justify-content-end"  >
+                <span class="btn" onmouseover="" style="cursor:default"><b>{{gridCurrentPage}}</b>-<b>{{gridTotalPages()}}</b> of <b>{{rows.length}}</b></span> 
+                <span class="input-group"  data-toggle="tooltip" data-placement="right" title="Records per Page">
+                    <span class="input-group-prepend">
+                        <span class="input-group-text"><b>Records</b> / <b>Page</b></span>
                     </span>
-                    
-                </div>
-               
-            </nav>
+                    <select class="form-control" [(ngModel)]="gridPageSize">
+                        <option *ngFor="let number of pageSizeOptions">{{number}}</option>
+                    </select>
+                </span>      
+                &nbsp;          
+                <span style="height:0;display: flex">
+                    <ngb-pagination   [collectionSize]="gridTotalPages()*10" [(page)]="gridCurrentPage"  [boundaryLinks]="true" ></ngb-pagination>
+                </span>
+            </span>                        
+        </div>
+        <div  *ngIf="rowsLoading" style="width:100%">
+            <br/>
+            <ngb-progressbar type="{{getProgressType()}}" [animated]="false" [striped]="true" [value]="rowsLoadingPercent"  >
+                    <b><i>{{rowsLoadingText==""?rowsLoadingText:rowsLoadingPercent + "%"}}</i></b>
+            </ngb-progressbar>
+        </div>
+        
+    </nav>
+    
     
    <div class="ngngrid-scroll" [ngStyle]="setGridTableStyle()">
       <table id="ngGridTable" class="table table-condensed table-bordered table-striped">
-          <tr>              
-              <th *ngIf="childColumndefinitions.length > 0" class="bg-primary"></th>
-              <th *ngIf="showRowNumbers" class="bg-primary">#</th>              
-              <th *ngIf="showRowSelector" (click)="toggleRowsSelect()" style="cursor:pointer" data-toggle="tooltip" title="Select/Unselect All" class="bg-primary">                                    
+          <tr>      
+              <th *ngIf="childColumndefinitions.length > 0" [ngClass]="columnHeaderClass"></th>
+              <th *ngIf="showRowNumbers" [ngClass]="columnHeaderClass">#</th>              
+              <th *ngIf="showRowSelector" (click)="toggleRowsSelect()" style="cursor:pointer" data-toggle="tooltip" title="Select/Unselect All" [ngClass]="columnHeaderClass">                                    
                   <input type="checkbox" [(ngModel)] ="allRowsSelected" aria-label="Checkbox for following text input" readonly>
               </th>
               <ng-container *ngFor="let c of columnDefinitions" >
-                <th  *ngIf="!c.isNgNgridColumnHide"  class="bg-primary">
+                <th  *ngIf="!c.isNgNgridColumnHide"  [ngClass]="columnHeaderClass">
                     <span (click)="changeSort(c)" style="cursor:pointer">
                         {{c.DisplayName()}} <i class="text-dark">{{getColumnType(c)}}</i>
                         <span *ngIf="isSorted(c)" [ngClass]="gridSortOrder? 'fas fa-caret-down':'fas fa-caret-up'" ></span>
@@ -89,7 +115,7 @@
                     <span style="cursor:pointer" *ngIf="isColFilterApplied(c.Name)" class="fas fa-filter" (click)="removeColFilters(c);$event.stopPropogation()"></span>
                 </th>
              </ng-container>
-          </tr>
+          </tr>          
           <tr>
               <th *ngIf="childColumndefinitions.length > 0"></th>
               <th *ngIf="showRowNumbers"></th>
@@ -102,28 +128,28 @@
                             <li class="dropdown-item ngngrid-dropdown"><small class="text-muted">*Type & hit Enter to apply filters</small></li>
                             <li class="dropdown-divider"></li>                                   
                             <li class="dropdown-item ngngrid-dropdown" *ngIf="getColumnType(c)=='Ngrid2DateColumn'">                                                                                                   
-                                    <div>
-                                        <span class="badge badge-primary">Range</span> {{ngNgridStartDate.month}}/{{ngNgridStartDate.day}}/{{ngNgridStartDate.year}}
-                                         - {{ngNgridEndDate.month}}/{{ngNgridEndDate.day}}/{{ngNgridEndDate.year}}
-                                    </div>
-                                    <ngb-datepicker #dtStart [(ngModel)]="ngNgridStartDate" [maxDate]="ngNgridEndDate" (select)="updateDateRangeFilter(c.Name,ngNgridStartDate,ngNgridEndDate)" ></ngb-datepicker>                                    
-                                    <ngb-datepicker #dtEnd [(ngModel)]="ngNgridEndDate" [minDate]="ngNgridStartDate"></ngb-datepicker>                                                                
+                                <div>
+                                    <span class="badge badge-primary">Range</span> {{ngNgridStartDate.month}}/{{ngNgridStartDate.day}}/{{ngNgridStartDate.year}}
+                                        - {{ngNgridEndDate.month}}/{{ngNgridEndDate.day}}/{{ngNgridEndDate.year}}
+                                </div>
+                                <ngb-datepicker #dtStart [(ngModel)]="c.startRange" [maxDate]="c.endRange" (select)="updateDateRangeFilter(c)" ></ngb-datepicker>                                    
+                                <ngb-datepicker #dtEnd [(ngModel)]="c.endRange" [minDate]="c.startRange"></ngb-datepicker>                                                                
                             </li>
                             <!-- TODO: numbering range filter -->
-                            <!-- <li class="dropdown-item ngngrid-dropdown" *ngIf="getColumnType(c)=='Ngrid2NumberColumn'">
+                            <li class="dropdown-item ngngrid-dropdown" *ngIf="getColumnType(c)=='Ngrid2NumberColumn'">
                                 <span class="input-group" style="padding-bottom:5px">
                                     <span class="input-group-addon">
                                         #
                                     </span>
-                                    <input type="number" class="form-control" [(ngModel)]="ngNgridStartNumber" required placeholder="From" (ngModelChange)="updateRangeFilter(c,ngNgridStartNumber,ngNgridEndNumber,true)" />
+                                    <input type="number" class="form-control" [(ngModel)]="c.startRange" required placeholder="From" (ngModelChange)="updateNumberRangeFilter(c)" />
                                 </span>
                                 <span class="input-group">
                                     <span class="input-group-addon">
                                         #
                                     </span>
-                                    <input type="number" class="form-control" [(ngModel)]="ngNgridEndNumber" required placeholder="To" (ngModelChange)="updateRangeFilter(c,ngNgridStartNumber,ngNgridEndNumber,true)" />
+                                    <input type="number" class="form-control" [(ngModel)]="c.endRange" required placeholder="To" (ngModelChange)="updateNumberRangeFilter(c)" />
                                 </span>
-                            </li> -->
+                            </li>
                             <li *ngIf="getColumnType(c)=='Ngrid2DateColumn' || getColumnType(c)=='Ngrid2NumberColumn'" class="dropdown-divider"></li>
                             <!-- TODO: pagination and check box selection for the distinct values -->
                             <!-- <div class="btn-group">
@@ -307,23 +333,6 @@
               </td>
             </tr>
           </ng-container>
-
-         
-         
-      </table>
-      <!-- TODO: Create progress bar for rows loading -->
-      <!-- <progressbar *ngIf="rowsLoading" class="active progress-striped" value="100" type="primary">
-          <b><i>{{rowsLoadingText}}</i></b>
-      </progressbar> -->
-      <!-- <div>
-        <i class="fas fa-stroopwafel"></i>            
-        <div *ngFor="let r of rows">           
-            {{showObject(r)}}                              
-        </div>                    
-     </div> -->
+      </table>   
    </div>  
 </div>
-
-<!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->

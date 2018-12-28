@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Ngrid2ButtonColumn, Ngrid2DefaultColumn, Ngrid2InputColumn, Ngrid2SelectColumn, Ngrid2LinkColumn, Ngrid2DateColumn,Ngrid2DropdownFilter,INgrid2Row } from 'ngrid2';
+import { Ngrid2ButtonColumn, Ngrid2DefaultColumn, Ngrid2InputColumn, Ngrid2SelectColumn, Ngrid2LinkColumn, Ngrid2DateColumn,Ngrid2DropdownFilter,INgrid2Row, Ngrid2NumberColumn } from 'ngrid2';
 import { AppObj } from './appObj';
+import { SelectMultipleControlValueAccessor } from '@angular/forms';
 
 
 @Component({
@@ -17,6 +18,9 @@ export class AppComponent implements OnInit {
    rows : any[];
    childColumndefinitions : Ngrid2DefaultColumn[];   
    childPropertynames:  string[]; 
+   rowsLoading: boolean;
+   rowsLoadingPercent: number;   
+   showSettings: boolean ;
 
   getButtonCol(): Ngrid2DefaultColumn {
     var btnCol : Ngrid2ButtonColumn = new Ngrid2ButtonColumn();
@@ -336,7 +340,7 @@ export class AppComponent implements OnInit {
   }
 
   getNumberCol(): Ngrid2DefaultColumn {
-    var numCol : Ngrid2DefaultColumn = new Ngrid2DefaultColumn();    
+    var numCol : Ngrid2NumberColumn = new Ngrid2NumberColumn();    
     numCol.Name= "Col7",
     numCol.isNgNgridColumnHide = false,
     numCol.DisplayName = () => {      
@@ -382,11 +386,15 @@ export class AppComponent implements OnInit {
     return numCol;
   }
   
-  ngOnInit() {           
+  async ngOnInit() {           
     this.columnDefinitions = [];    
     this.rows = [];    
     this.childColumndefinitions = [];
-    this.childPropertynames =["Children"];    
+    this.childPropertynames =["Children"];
+    this.rowsLoading = true;   
+    this.rowsLoadingPercent = 0;    
+    this.showSettings = true;
+
 
     this.columnDefinitions.push(this.getDefaultCol());
 
@@ -458,8 +466,15 @@ export class AppComponent implements OnInit {
         childRow.Index = 0;        
         newrow.Children.push(childRow);
       }
-      this.rows.push(newrow);      
+      this.rows.push(newrow);     
+      //await this.delay(500);
+      this.rowsLoadingPercent += 10;
+    
     }
+    this.rowsLoadingPercent = 100;
         
-  }  
+  } 
+   delay(ms: number):Promise<any> {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+  } 
 }

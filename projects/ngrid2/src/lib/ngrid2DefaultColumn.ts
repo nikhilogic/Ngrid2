@@ -1,5 +1,6 @@
 import { INgrid2Row } from "./ngrid2Row";
 import { Ngrid2DropdownFilter } from "./ngrid2DropdownFilter";
+import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 export class Ngrid2DefaultColumn
 {   
@@ -32,6 +33,7 @@ export class Ngrid2DefaultColumn
     FilterTextFn: (d : Ngrid2DropdownFilter) => string;
     
     NullOrEmptyFn: (r : INgrid2Row) => string;
+
 }
 
 export class Ngrid2ButtonColumn extends Ngrid2DefaultColumn
@@ -65,14 +67,14 @@ export class Ngrid2LinkColumn extends Ngrid2ButtonColumn
 export class Ngrid2DateColumn extends Ngrid2ButtonColumn
 {    
     readonly columnType: string = "Ngrid2DateColumn";
+    startRange: NgbDateStruct;
+    endRange: NgbDateStruct;
     DateFormatFn: (r : INgrid2Row) => string;    
 }
 
 export class Ngrid2NumberColumn extends Ngrid2ButtonColumn
 {    
-    columnType: string = "Ngrid2NumberColumn";
-    DateFormatFn: (r : INgrid2Row) => string;    
+    readonly columnType: string = "Ngrid2NumberColumn";   
+    startRange: number;
+    endRange: number; 
 }
-//date
-//number
-//link
