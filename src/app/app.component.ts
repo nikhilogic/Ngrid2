@@ -223,21 +223,19 @@ export class AppComponent implements OnInit {
       //console.warn('select fun caled ' + this.selectionList.length);
       return [
         {
-          "selKey" : "abc",
-          "selVal" : "1"
+          "propA" : "abc",
+          "propB" : "1"
         },
         {
-          "selKey" : "def",
-          "selVal" : "2"
+          "propA" : "def",
+          "propB" : "2"
         },
         {
-          "selKey" : "ghi",
-          "selVal" : "3"
+          "propA" : "ghi",
+          "propB" : "3"
         }
       ];
-    };
-    selCol.SelectValue = "selVal";
-    selCol.SelectKey = "selKey";
+    };    
     return selCol;
   }
 
@@ -437,8 +435,8 @@ export class AppComponent implements OnInit {
       newrow.Col3 = this.color_array[index];
 
       newrow.Col4 =  {
-        selKey: "abc",
-        selVal: "1"                
+        propA: "abc",
+        propB: "1"                
       };
 
       newrow.Col5 = this.color_array[index];
@@ -457,8 +455,8 @@ export class AppComponent implements OnInit {
         childRow.Col2 = this.color_array[iChildRow];
         childRow.Col3 = this.color_array[iChildRow];
         childRow.Col4 =  {
-          selKey: "abc",
-          selVal: "1"                
+          propA: "abc",
+          propB: "1"                
           };
         childRow.Col5 = this.color_array[iChildRow];
         childRow.Col6 = tempDate;
@@ -467,7 +465,7 @@ export class AppComponent implements OnInit {
         newrow.Children.push(childRow);
       }
       this.rows.push(newrow);     
-      //await this.delay(500);
+      await this.delay(500);
       this.rowsLoadingPercent += 10;
     
     }

@@ -109,7 +109,7 @@
               <ng-container *ngFor="let c of columnDefinitions" >
                 <th  *ngIf="!c.isNgNgridColumnHide"  [ngClass]="columnHeaderClass">
                     <span (click)="changeSort(c)" style="cursor:pointer">
-                        {{c.DisplayName()}} <i class="text-dark">{{getColumnType(c)}}</i>
+                        {{c.DisplayName()}} <i class="text-dark">{{c.columnType}}</i>
                         <span *ngIf="isSorted(c)" [ngClass]="gridSortOrder? 'fas fa-caret-down':'fas fa-caret-up'" ></span>
                     </span>
                     <span style="cursor:pointer" *ngIf="isColFilterApplied(c.Name)" class="fas fa-filter" (click)="removeColFilters(c);$event.stopPropogation()"></span>
@@ -127,31 +127,39 @@
                         <ul  ngbDropdownMenu [ngClass]="j==columnDefinitions.length-1 ? 'dropdown-menu-right' :''"  >                            
                             <li class="dropdown-item ngngrid-dropdown"><small class="text-muted">*Type & hit Enter to apply filters</small></li>
                             <li class="dropdown-divider"></li>                                   
-                            <li class="dropdown-item ngngrid-dropdown" *ngIf="getColumnType(c)=='Ngrid2DateColumn'">                                                                                                   
+                            <li class="dropdown-item ngngrid-dropdown" *ngIf="c.columnType=='Ngrid2DateColumn'">                                                                                                   
                                 <div>
-                                    <span class="badge badge-primary">Range</span> {{ngNgridStartDate.month}}/{{ngNgridStartDate.day}}/{{ngNgridStartDate.year}}
-                                        - {{ngNgridEndDate.month}}/{{ngNgridEndDate.day}}/{{ngNgridEndDate.year}}
+                                    <span class="text-muted">Range seletion</span>
                                 </div>
-                                <ngb-datepicker #dtStart [(ngModel)]="c.startRange" [maxDate]="c.endRange" (select)="updateDateRangeFilter(c)" ></ngb-datepicker>                                    
-                                <ngb-datepicker #dtEnd [(ngModel)]="c.endRange" [minDate]="c.startRange"></ngb-datepicker>                                                                
+                                <ngb-datepicker #dtStart [(ngModel)]="c.startRange" [maxDate]="c.endRange"></ngb-datepicker>                                    
+                                <ngb-datepicker #dtEnd [(ngModel)]="c.endRange" [minDate]="c.startRange"></ngb-datepicker>       
+                                <div>
+                                    <button class="btn btn-primary" (click)="updateDateRangeFilter(c)" >Apply</button>
+                                </div>                                                         
                             </li>
                             <!-- TODO: numbering range filter -->
-                            <li class="dropdown-item ngngrid-dropdown" *ngIf="getColumnType(c)=='Ngrid2NumberColumn'">
-                                <span class="input-group" style="padding-bottom:5px">
-                                    <span class="input-group-addon">
-                                        #
+                            <li class="dropdown-item ngngrid-dropdown" *ngIf="c.columnType=='Ngrid2NumberColumn'">
+                                <div>
+                                    <span class="text-muted">Range seletion</span>
+                                </div>
+                                <span class="input-group input-group-sm">
+                                    <!-- <span class="input-group-prepend">
+                                        <span class="input-group-text">Range</span>
+                                    </span> -->
+                                    <input type="number" class="form-control" [(ngModel)]="c.startRange" required placeholder="From"  />                                
+                                    <span class="input-group-prepend">
+                                        <span class="input-group-text">-</span>
                                     </span>
-                                    <input type="number" class="form-control" [(ngModel)]="c.startRange" required placeholder="From" (ngModelChange)="updateNumberRangeFilter(c)" />
-                                </span>
-                                <span class="input-group">
-                                    <span class="input-group-addon">
-                                        #
-                                    </span>
-                                    <input type="number" class="form-control" [(ngModel)]="c.endRange" required placeholder="To" (ngModelChange)="updateNumberRangeFilter(c)" />
-                                </span>
+                                    <input type="number" class="form-control" [(ngModel)]="c.endRange" required placeholder="To"  />
+                                    <span class="input-group-append">
+                                        <button class="btn btn-primary" (click)="updateNumberRangeFilter(c)" >Apply</button>
+                                    </span> 
+                                </span> 
+                                                              
                             </li>
-                            <li *ngIf="getColumnType(c)=='Ngrid2DateColumn' || getColumnType(c)=='Ngrid2NumberColumn'" class="dropdown-divider"></li>
-                            <!-- TODO: pagination and check box selection for the distinct values -->
+                            <li *ngIf="c.columnType=='Ngrid2DateColumn' || c.columnType=='Ngrid2NumberColumn'" class="dropdown-divider"></li>
+                            
+                            <span>TODO: pagination and check box selection for the distinct values</span>
                             <!-- <div class="btn-group">
                                 <label class="btn" onmouseover="" style="cursor:default">
                                     <b>{{filterCurrentPage}}</b>-<b>{{totalPages(c.ngrid2DropdownFilteredObjects.length,filterPageSize)}}</b> of <b>{{c.ngrid2DropdownFilteredObjects.length}}</b>
@@ -203,7 +211,7 @@
                     <td  *ngFor="let c of columnDefinitions; let cIndex = index" [ngClass]="c.CellClassFn(row)">                                                   
                         <span  *ngIf="!c.isNgNgridColumnHide">                          
                             <span [ngClass]="getRowIcon(cIndex,row)"></span>
-                            <span [ngSwitch]="getColumnType(c)">                       
+                            <span [ngSwitch]="c.columnType">                       
                                 <button type="button" *ngSwitchCase="'Ngrid2ButtonColumn'" [disabled]="c.DisabledFn(row)" class="btn  btn-sm {{c.ClassFn(row)}}" data-toggle="tooltip" data-placement="right" title="{{c.TooltipFn(row)}}" (click)="c.ClickFn(row)">
                                     <span *ngIf="c.IconFn" [ngClass]="c.IconFn(row)"></span>
                                     {{c.TextFn ?  c.TextFn(row) :  getColValue(c,row)}}
@@ -215,23 +223,20 @@
                                 </span>
                                 <span *ngSwitchCase="'Ngrid2SelectColumn'" class="input-group">                                                                      
                                     <span *ngIf="c.ClassFn" class="input-group-addon" [ngClass]="c.ClassFn(row)">                                                                
-                                    </span>
-                                    <select   *ngIf="c.SelectValue != null" [compareWith]="compareFn" class="form-control" [(ngModel)]="row.SelectBind" (ngModelChange)="row.isNgNgridDirty=true;setColValue(c,row,row.SelectBind)" required>
-                                        <option *ngFor="let o of c.SelectFn(row)"  [ngValue]="o">
-                                            {{o[c.SelectKey]}} : {{o[c.SelectValue]}}
+                                    </span>                                    
+                                    <select [compareWith]="compareFn" class="form-control" [ngModel]="getColValue(c,row)" (change)="row.isNgNgridDirty=true;setColValue(c,row,$event.target.selectedIndex)" required>
+                                        <option *ngFor="let o of c.SelectFn(row)"  [ngValue]="o">                                        
+                                            {{c.TextFn ?  c.TextFn(row) : toString(o) }}
                                         </option>
-                                    </select>
-                                    <select *ngIf="c.SelectValue == null" class="form-control" [(ngModel)]="row.SelectBind" (ngModelChange)="row.isNgNgridDirty=true;setColValue(c,row,row.SelectBind)" required>
-                                        <option *ngFor="let o of c.SelectFn(row)"></option>
-                                    </select>                            
+                                    </select>                                    
                                 </span>
                                 <a *ngSwitchCase="'Ngrid2LinkColumn'" href="{{c.UrlFn(row)}}" target="{{c.TargetFn ? c.TargetFn(row):'_blank'}}" [ngClass]="c.ClassFn(row)">
                                     <span *ngIf="c.IconFn" [ngClass]="c.IconFn(row)"></span>
                                     {{c.TextFn ?  c.TextFn(row) :  getColValue(c,row)}}
                                     <span *ngIf="c.BadgeFn" class="badge" [ngClass]="c.BadgeClassFn(row)">{{c.BadgeFn(row)}}</span>
                                 </a>
-                                <span *ngSwitchCase="'Ngrid2InputColumn'" class="input-group">                                                        
-                                    <input class="form-control" [ngClass]="c.ClassFn(row)"  [(ngModel)]="row.InputBind" ng-readonly="c.DisabledFn(row)" (ngModelChange)="row.isNgNgridDirty=true;setColValue(c,row,row.InputBind)" placeholder="{{c.NullOrEmptyFn(row)}}" type="{{c.InputTypeFn(row)}}" />
+                                <span *ngSwitchCase="'Ngrid2InputColumn'" class="input-group">                                       
+                                    <input class="form-control" [ngClass]="c.ClassFn(row)"  [ngModel]="getColValue(c,row)" ng-readonly="c.DisabledFn(row)" (change)="row.isNgNgridDirty=true;setColValue(c,row,$event.target.value)" placeholder="{{c.NullOrEmptyFn(row)}}" type="{{c.InputTypeFn(row)}}" />                                    
                                 </span>
                                 <span  *ngSwitchDefault [ngClass]="c.ClassFn ? c.ClassFn(row) : ''"  data-toggle="tooltip" data-placement="right" title="{{c.TooltipFn(row)}}">
                                     <span *ngIf="c.IconFn" [ngClass]="c.IconFn(row)"></span>
@@ -262,7 +267,7 @@
 
                           <td *ngFor="let childCol of childColumndefinitions; let childColIndex = index" [ngClass]="childCol.CellClassFn(childRow)">                                
                                 <span [ngClass]="getRowIcon(childColIndex,childRow)"></span>
-                                <span  [ngSwitch]="getColumnType(childCol)">                                  
+                                <span  [ngSwitch]="childCol.columnType">                                  
                                   <button *ngSwitchCase="'Ngrid2ButtonColumn'" [disabled]="childCol.DisabledFn(childRow)" class="btn  btn-sm  {{childCol.ClassFn(childRow)}}" data-toggle="tooltip" data-placement="right" title="{{childCol.TooltipFn(childRow)}}" (click)="childCol.ClickFn(childRow)">
                                       <span *ngIf="childCol.IconFn" [ngClass]="childCol.IconFn(childRow)"></span>
                                       {{childCol.TextFn ?  childCol.TextFn(childRow) :  getColValue(childCol,childRow)}}
@@ -275,14 +280,11 @@
                                   <span *ngSwitchCase="'Ngrid2SelectColumn'" class="input-group">                                                                      
                                     <span *ngIf="childCol.ClassFn" class="input-group-addon" [ngClass]="childCol.ClassFn(childRow)">                                                                
                                     </span>
-                                    <select   *ngIf="childCol.SelectValue != null" [compareWith]="compareFn" class="form-control" [(ngModel)]="childRow.SelectBind"  (ngModelChange)="childRow.isNgNgridDirty=true;setColValue(childCol,childRow,childRow.SelectBind)" required>                              
+                                    <select  [compareWith]="compareFn" class="form-control" [ngModel]="getColValue(childCol,childRow)"  (change)="childRow.isNgNgridDirty=true;setColValue(childCol,childRow,$event.target.selectedIndex)" required>                              
                                         <option *ngFor="let o of childCol.SelectFn(childRow)"  [ngValue]="o">
-                                            {{o[childCol.SelectKey]}} : {{o[childCol.SelectValue]}}
+                                            {{childCol.TextFn ?  childCol.TextFn(childRow) : toString(o) }}
                                         </option>
-                                    </select>
-                                    <select *ngIf="childCol.SelectValue == null" class="form-control" [(ngModel)]="childRow.SelectBind" (ngModelChange)="childRow.isNgNgridDirty=true;setColValue(childCol,childRow,childRow.SelectBind)" required>                              
-                                        <option *ngFor="let o of childCol.SelectFn(childRow)"></option>
-                                    </select>                            
+                                    </select>                                    
                                  </span>
                                   
 
@@ -292,7 +294,7 @@
                                     <span *ngIf="childCol.BadgeFn" class="badge" [ngClass]="childCol.BadgeClassFn(childRow)">{{childCol.BadgeFn(childRow)}}</span>
                                  </a>
                                  <span *ngSwitchCase="'Ngrid2InputColumn'" class="input-group">                                                        
-                                    <input class="form-control" [ngClass]="childCol.ClassFn(childRow)"  [(ngModel)]="childRow.InputBind" ng-readonly="childCol.DisabledFn(childRow)" (ngModelChange)="childRow.isNgNgridDirty=true;setColValue(childCol,childRow,childRow.InputBind)" placeholder="{{childCol.NullOrEmptyFn(childRow)}}" type="{{childCol.InputTypeFn(childRow)}}" />
+                                    <input class="form-control" [ngClass]="childCol.ClassFn(childRow)"  [ngModel]="getColValue(childCol,childRow)" ng-readonly="childCol.DisabledFn(childRow)" (change)="childRow.isNgNgridDirty=true;setColValue(childCol,childRow,$event.target.value)" placeholder="{{childCol.NullOrEmptyFn(childRow)}}" type="{{childCol.InputTypeFn(childRow)}}" />
                                  </span>
                                 <span *ngSwitchDefault [ngClass]="childCol.ClassFn ? childCol.ClassFn(childRow) : ''">
                                     {{childCol.TextFn ?  childCol.TextFn(childRow) :  getColValue(childCol,childRow)}}

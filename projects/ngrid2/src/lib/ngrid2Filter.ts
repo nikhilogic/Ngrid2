@@ -1,4 +1,4 @@
-export class Ngrid2Filter {        
+export class Ngrid2Filter {            
     Filters: string[];
     IsFirstFilter: boolean;   
 }

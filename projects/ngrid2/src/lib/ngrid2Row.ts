@@ -1,7 +1,5 @@
 
 export interface INgrid2Row {    
-    InputBind: string;
-    SelectBind: string;
     isNgNgridOpen: boolean;
     Index : number;
     isNgNgridMarkedForDelete: boolean;

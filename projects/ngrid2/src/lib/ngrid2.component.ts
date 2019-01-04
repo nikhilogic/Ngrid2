@@ -3,7 +3,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NgbCalendar, NgbDateStruct, NgbDropdown, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Ngrid2DataParams } from './ngrid2DataParams';
-import { Ngrid2DateColumn, Ngrid2DefaultColumn, Ngrid2NumberColumn } from './ngrid2DefaultColumn';
+import { Ngrid2DateColumn, Ngrid2DefaultColumn, Ngrid2NumberColumn, Ngrid2SelectColumn } from './ngrid2DefaultColumn';
 import { Ngrid2DropdownFilter } from './ngrid2DropdownFilter';
 import { Ngrid2Filter } from './ngrid2Filter';
 import { Ngrid2FilterParams } from './ngrid2FilterParams';
@@ -305,7 +305,15 @@ export class Ngrid2Component implements OnInit {
         return s;
     }
 
-    setColValue(col: Ngrid2DefaultColumn, row: INgrid2Row, value): void {
+    
+    setColValue(col: Ngrid2DefaultColumn, row: INgrid2Row,value: any): void {
+
+        if(col.columnType == 'Ngrid2SelectColumn')
+        {
+            var  indexSelect : number = value as number;
+            var colSelect : Ngrid2SelectColumn  =  col as Ngrid2SelectColumn;
+            value = colSelect.SelectFn(row)[indexSelect];
+        }
 
         if (col.Name != null) {
             var arrSplitSortProp = col.Name.split('.');
@@ -408,10 +416,11 @@ export class Ngrid2Component implements OnInit {
                             colDisplayValue = JSON.stringify(colDisplayValue);
                         }
                     }
-                    if (this.getColumnType(col) == 'Ngrid2DateColumn') {
-                        //colDisplayValue = col.FilterDateFormatFn ? $filter('date')(colDisplayValue, col.FilterDateFormatFn(null)) : $filter('date')(colDisplayValue);
-                        //TODO
-                    }
+                    //TODO
+                    // if (col.columnType == 'Ngrid2DateColumn') {
+                    //     //colDisplayValue = col.FilterDateFormatFn ? $filter('date')(colDisplayValue, col.FilterDateFormatFn(null)) : $filter('date')(colDisplayValue);
+                    //     //TODO
+                    // }
 
                     distinctValues.push({ DistinctValue: colValue, DistinctCount: 1, DisplayValue: colDisplayValue, Filters: [] });
                 }
@@ -541,7 +550,7 @@ export class Ngrid2Component implements OnInit {
                 }
                 //Does the filter exists -if it exists toggle it . if it dosent then add it               
                 var posFilter = vFilterTemp.Filters.indexOf(filterString);
-                if (posFilter == -1) {
+                if (posFilter == -1) {                    
 
                     //item  not found - add it
                     vFilterTemp.Filters.push(filterString);
@@ -549,7 +558,7 @@ export class Ngrid2Component implements OnInit {
                     if (!vFilterTemp.IsFirstFilter) {
                         vFilterTemp.IsFirstFilter = firstFilter;
                     }
-                    filtersAdded.push(filterString);
+                    filtersAdded.push(filterString);                    
                 }
                 else if (!ignoreIfExists) {
 
@@ -561,7 +570,7 @@ export class Ngrid2Component implements OnInit {
                         //TODO:  check this logic was replaced by simple
                         this.columnFilters[0].IsFirstFilter = true;
                     }
-                    filtersRemoved.push(filterString);
+                    filtersRemoved.push(filterString);                    
                 }
             }
 
@@ -646,7 +655,7 @@ export class Ngrid2Component implements OnInit {
                 }
             }
             if (colFilters.length > 0) {
-                this.addColumnFilters(col.Name, colFilters, false);
+                this.addColumnFilters(col.Name, colFilters, true);
             }
         }
     }
@@ -663,19 +672,11 @@ export class Ngrid2Component implements OnInit {
                 }
             }
             if (colFilters.length > 0) {
-                this.addColumnFilters(col.Name, colFilters, false);
+                this.addColumnFilters(col.Name, colFilters, true);                
             }
         }
     }
-
-    getColumnType(c: Ngrid2DefaultColumn): string {
-        //
-        // NOTE: bug in angular prod deployment prevents use of this
-        // return c.constructor.name;
-        //
-        return c.columnType;
-    }
-
+   
     compareFn(selVa1: object, selVal2: object): boolean {
         var x = JSON.stringify(selVa1) == JSON.stringify(selVal2);
         return x;
@@ -764,38 +765,16 @@ export class Ngrid2Component implements OnInit {
         return (this.rowsLoadingPercent <= 80) ? 'info' : 'success';
     }
 
-    //  setValueOrDefault(o:any,defValue :any) : any {
-    //     o =  (o == null) ? defValue : o; 
-    //  }
+    toString(o: any) : string
+    {
+        //return JSON.stringify(o,null,'\t');
+        return JSON.stringify(o);
+    }
 
     ngOnInit() {
-        // ng-init="newInputVal = getColValue(c,row)" 
-        //console.info('showSettings:' + this.showSettings);
-        this.rows.forEach(r => {
-            this.columnDefinitions.forEach(c => {
-                var colType = this.getColumnType(c);
-                if (colType == 'Ngrid2InputColumn') {
-                    r.InputBind = this.getColValue(c, r);
-                }
-                else if (colType == 'Ngrid2SelectColumn') {
-                    r.SelectBind = this.getColValue(c, r);
-                }
-
-                r.Children.forEach(childRow => {
-                    this.childColumndefinitions.forEach(childCol => {
-                        var childColType = this.getColumnType(childCol);
-                        if (childColType == 'Ngrid2InputColumn') {
-                            childRow.InputBind = this.getColValue(childCol, childRow);
-                        }
-                        else if (childColType == 'Ngrid2SelectColumn') {
-                            childRow.SelectBind = this.getColValue(childCol, childRow);
-                        }
-                    });
-                });
-                c.DisableFilter = false;
-            })
-        });
         this.columnFilters = new Map<string, Ngrid2Filter>();
     }
+
+    
 
 }

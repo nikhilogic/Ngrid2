@@ -28,6 +28,8 @@ export class Ngrid2DefaultColumn
 
     IconFn: (r : INgrid2Row) => string ;
 
+    TextFn: (r: INgrid2Row) => string;
+
     FilterClassFn: (d : Ngrid2DropdownFilter) => string ;
     FilterIconFn: (d : Ngrid2DropdownFilter) => string ;
     FilterTextFn: (d : Ngrid2DropdownFilter) => string;
@@ -52,9 +54,7 @@ export class Ngrid2InputColumn extends Ngrid2ButtonColumn
 export class Ngrid2SelectColumn extends Ngrid2ButtonColumn
 {    
     readonly columnType: string = "Ngrid2SelectColumn";
-    SelectFn: (r : INgrid2Row) => object[];
-    SelectValue: string;
-    SelectKey: string;
+    SelectFn: (r : INgrid2Row) => object[];    
 }
 
 export class Ngrid2LinkColumn extends Ngrid2ButtonColumn

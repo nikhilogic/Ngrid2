@@ -2,9 +2,7 @@ import { INgrid2Row } from "ngrid2";
 
 export class AppObj implements INgrid2Row
 {
-    Children: INgrid2Row[];
-    InputBind: string;    
-    SelectBind: string;
+    Children: INgrid2Row[];    
     isNgNgridOpen: boolean;
     Index: number;
     isNgNgridMarkedForDelete: boolean;
