@@ -8,9 +8,11 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "pack": "ng build ngrid2 && npm pack .\\dist\\ngrid2",
+    "pack": "ng build ngrid2 && copy .\\LICENSE .\\dist\\ngrid2 && copy .\\README.md .\\dist\\ngrid2 && npm pack .\\dist\\ngrid2",
+    "publish": "npm login && npm publish .\\ngrid2-0.0.3.tgz",
     "gitpages": "ng build --prod --output-path docs --base-href ngNgrid2 && copy .\\docs\\index.html .\\docs\\404.html",
-    "testlocal": "ng build ngrid2 && ng serve -o"
+    "testlocal": "ng build ngrid2 && ng serve -o",
+    "packpublish":"npm run pack && npm run publish"
   },
   "private": true,
   "dependencies": {
