@@ -8,11 +8,13 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "pack": "ng build ngrid2 && copy .\\LICENSE .\\dist\\ngrid2 && copy .\\README.md .\\dist\\ngrid2 && npm pack .\\dist\\ngrid2",
-    "publish": "npm login && npm publish .\\ngrid2-0.0.3.tgz",
-    "gitpages": "ng build --prod --output-path docs --base-href ngNgrid2 && copy .\\docs\\index.html .\\docs\\404.html",
     "testlocal": "ng build ngrid2 && ng serve -o",
-    "packpublish":"npm run pack && npm run publish"
+    "clean": "del .\\ngrid2-*.tgz",
+    "upversion": "cd .\\projects\\ngrid2 && npm version patch",
+    "pack": "ng build ngrid2 && copy .\\LICENSE .\\dist\\ngrid2 && copy .\\README.md .\\dist\\ngrid2 && npm pack .\\dist\\ngrid2",
+    "publish": "npm login && for %X in (ngrid2-*.tgz) do npm publish .\\%X",    
+    "gitpages": "ng build --prod --output-path docs --base-href ngNgrid2 && copy .\\docs\\index.html .\\docs\\404.html",    
+    "packpublish": "npm run clean && npm run upversion && npm run pack && npm run publish && npm run gitpages"
   },
   "private": true,
   "dependencies": {
@@ -32,7 +34,7 @@
     "zone.js": "^0.8.26"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^0.10.7",
+    "@angular-devkit/build-angular": "^0.12.1",
     "@angular-devkit/build-ng-packagr": "~0.10.0",
     "@angular/cli": "^7.1.1",
     "@angular/compiler-cli": "^7.1.1",

@@ -267,6 +267,7 @@ Apache-2.0
 MIT
 
 ngrid2
+SEE LICENSE IN LICENSE
 
 @angular/common
 MIT
