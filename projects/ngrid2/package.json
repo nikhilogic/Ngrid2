@@ -1,6 +1,6 @@
 {
   "name": "ngrid2",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "This is a data grid using angular 7 with typescript.",
   "keywords": [
     "ngrid2",

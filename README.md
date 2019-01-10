@@ -7,23 +7,15 @@ You can see the demo here: https://nikhilogic.github.io/ngNgrid2/
 
 ## To install the library in your project :
 
-1.  Add npm package
+1.  Add npm package and dependencies
 ```Batchfile
-npm i ngrid2
+npm install ngrid2
+npm install @angular/http@latest
+npm install @ng-bootstrap/ng-bootstrap@latest
+npm install npm@latest
 ```
 
-2. In your HTML reference the grid like this
-
-```html
-<ng-ngrid2
-[columnDefinitions]="columnDefinitions" 
-[childColumndefinitions]="childColumndefinitions"
-[rows]="rows" 
-[showSettings]="false"
-[childPropertynames]="childPropertynames"></ng-ngrid2>
-```
-
-3. Add imports to your app.module.ts 
+2. Add imports to your app.module.ts 
 ```typescript
     import { Ngrid2Module } from 'ngrid2';
     ...
@@ -37,7 +29,7 @@ npm i ngrid2
     })
 ```
 
-4. In your app.component.ts
+3. In your app.component.ts
 ```typescript
     //Import required types
     ...
@@ -129,6 +121,16 @@ npm i ngrid2
     this.rows.push(newrow); 
     ...
  }
+```
+4. In your HTML reference the grid like this
+
+```html
+<ng-ngrid2
+[columnDefinitions]="columnDefinitions" 
+[childColumndefinitions]="childColumndefinitions"
+[rows]="rows" 
+[showSettings]="false"
+[childPropertynames]="childPropertynames"></ng-ngrid2>
 ```
 
 
