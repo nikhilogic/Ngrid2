@@ -34,6 +34,27 @@ npm install npm@latest
     //Import required types
     ...
     import { Ngrid2ButtonColumn, Ngrid2DefaultColumn, Ngrid2InputColumn, Ngrid2SelectColumn, Ngrid2LinkColumn,  Ngrid2DateColumn,Ngrid2DropdownFilter,INgrid2Row } from 'ngrid2';
+    import { MyObjectRow } from './MyObjectRow'; //this will be your (row) class which will implement the INgrid2Row interface 
+    // something like 
+    // export class MyObjectRow implements INgrid2Row
+    // {
+    //     Children: INgrid2Row[];    
+    //     isNgNgridOpen: boolean;
+    //     Index: number;
+    //     isNgNgridMarkedForDelete: boolean;
+    //     isNgNgridMarkedForNew: boolean;
+    //     isNgNgridDirty: boolean;
+    //     isNgNgridSelected: boolean;
+    //     isNgNgridUpdated: boolean;
+
+    //     Col1: string;
+    //     Col2: string;
+    //     Col3: string;
+    //     Col4 : object;
+    //     Col5 : string;      
+    //     Col6 : Date;
+    //     Col7 : number;
+    // }
     ...
 
     export class AppComponent implements OnInit {
@@ -112,8 +133,8 @@ npm install npm@latest
     this.columnDefinitions.push(this.getButtonCol());
 
     //create a row for the grid
-    var newrow : AppObj = new AppObj();
-    newrow.Index = index;
+    var newrow : MyObjectRow = new MyObjectRow();
+    newrow.Index = 0;
     newrow.isNgNgridOpen = false;
     newrow.Col2  = "textonbutton";      
     
